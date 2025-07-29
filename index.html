@@ -1,1022 +1,808 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Combined Table Example with Product Filter</title>
-    <link href="https://v1.fontapi.ir/css/Nazanin" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prices - Product Information</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        html, body {
-            margin: 0 !important;
-            padding: 0 !important;
-            height: 100%;
-        }
-
         body {
-            background-color: #000; /* پس زمینه سیاه کامل */
-            color: #eee;
-            /* background-image: url('1610pic.jpg'); حذف تصویر پس زمینه */
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: cover;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Vazir', sans-serif;
-        }
-
-        /* Media query for screens with a maximum width of 768px (typical for mobile) */
-        @media (max-width: 768px) {
-            body {
-                background-size: cover;
-                background-position: center center;
-            }
-        }
-
-        /* Style for the login container (Black Theme, Larger, White Border) */
-        #login-container {
-            background-color: rgba(34, 34, 34, 0.8); /* پس زمینه سیاه */
-            padding: 50px;
-            border-radius: 10px;
-            border: 1px solid #fff; /* نوار سفید نازک */
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* حذف نوار آبی درخشان */
-            text-align: center;
-            width: 450px;
-            height: auto;
-        }
-
-        #login-container h2 {
-            margin-bottom: 30px;
-            color: #fff;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            direction: rtl;
             text-align: right;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ccc;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="password"] {
-            width: calc(100% - 22px);
-            padding: 14px;
-            border: 1px solid #555;
-            border-radius: 6px;
+            margin: 0; 
+            background-color: #f0f0f0; 
+            display: flex; 
+            min-height: 100vh; 
             box-sizing: border-box;
-            font-family: 'Vazir', sans-serif;
-            direction: ltr;
-            background-color: #444;
-            color: #eee;
-            font-size: 1.1em;
+            position: relative; 
+            overflow-x: hidden; 
         }
 
-        button[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 14px 30px;
+        /* Open sidebar button */
+        .open-sidebar-btn {
+            position: fixed; 
+            top: 20px;
+            right: 20px; 
+            font-size: 30px;
+            background: none;
             border: none;
-            border-radius: 6px;
+            color: #343a40; 
             cursor: pointer;
-            font-family: 'Vazir', sans-serif;
+            z-index: 1001; 
+            transition: color 0.3s ease;
+        }
+        .open-sidebar-btn:hover {
+            color: #007bff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            height: 100%; 
+            width: 0; 
+            position: fixed; 
+            z-index: 1000; 
+            top: 0;
+            right: 0; 
+            background-color: #343a40;
+            overflow-x: hidden; 
+            transition: 0.5s; 
+            padding-top: 60px; 
+            box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+            white-space: nowrap; 
+        }
+
+        .sidebar.active {
+            width: 250px; 
+        }
+
+        .sidebar h3 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ffffff;
+            font-size: 1.5em;
+            padding: 0 20px; 
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 20px; 
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #007bff; 
+        }
+
+        .sidebar ul li a i {
+            margin-left: 10px; 
             font-size: 1.2em;
         }
 
-        button[type="submit"]:hover {
-            background-color: #0056b3;
+        /* Close sidebar button */
+        .closebtn {
+            position: absolute;
+            top: 0;
+            left: 25px; 
+            font-size: 36px;
+            margin-left: 50px;
+            color: #f1f1f1;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .closebtn:hover {
+            color: #007bff;
         }
 
-        #error-message {
-            color: #ff4d4d;
-            margin-top: 20px;
-        }
-
-        /* Style for the main content (initially hidden) */
-        #main-content {
-            display: none;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 1200px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        @font-face {
-            font-family: 'Vazir';
-            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/Vazir-Regular.woff2') format('woff2');
-        }
-
-        @font-face {
-            font-family: 'B Nazanin';
-            src: url('https://v1.fontapi.ir/css/Nazanin') format('woff2'); /* Using CDN link for B Nazanin font */
-        }
-
-        #main-content,
-        table {
-            font-family: 'Vazir', sans-serif;
-        }
-
-        @page {
-            size: A4 landscape;
-            margin: 0mm;
-        }
-
-        #main-content {
-            margin: 0;
-            padding: 0mm;
-            width: 297mm;
-            /* height: 210mm; */
-            box-sizing: border-box;
-            overflow: visible;
-        }
-
-        #preview {
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            box-sizing: border-box;
-            overflow: visible;
+            background-color: rgba(0,0,0,0.4); 
+            z-index: 999; 
+            display: none; 
+        }
+        .overlay.active {
+            display: block;
         }
 
+        /* Main content container */
+        .main-content {
+            flex-grow: 1; 
+            display: flex;
+            justify-content: center; 
+            align-items: flex-start; 
+            padding: 20px; 
+            box-sizing: border-box;
+            transition: margin-right 0.5s ease; 
+            margin-right: 0; 
+        }
+
+        /* Push content when sidebar is open */
+        body.sidebar-open .main-content {
+            margin-right: 250px; 
+        }
+
+        /* A4 landscape page container */
+        .page-container {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+            padding: 20mm; 
+            box-sizing: border-box;
+            
+            max-width: 1122px; 
+            flex-grow: 1; 
+            min-height: 794px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+        }
+        
+        h2 {
+            text-align: center;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
-            table-layout: auto;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        td,
-        th {
-            padding: 4px;
+        th, td {
+            border: 1px solid #dddddd;
             text-align: center;
-            border-top: 1px solid black;
-            border-left: 1px solid black;
-            border-right: 1px solid black;
-            box-sizing: border-box;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 0.7em;
+            padding: 12px;
+        }
+        thead {
+            background-color: #f2f2f2;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
         }
 
-        th {
-            font-size: 0.8em;
+        /* Highlight row on click */
+        .highlight {
+            background-color: #d1edda !important; /* Light green, using !important to ensure override */
+            transition: background-color 0.3s ease;
         }
 
-
-        .left-align {
-            text-align: left;
-        }
-
-        .right-align {
-            text-align: right;
-        }
-
-        .no-border {
-            border: none !important; /* Added !important to ensure override */
-        }
-
-        .merged {
+        /* Search and Autocomplete styles */
+        .search-container {
             text-align: center;
-            border: none;
-            font-family: 'Titr', sans-serif;
-            font-weight: bolder;
-            font-size: 1.2em;
-            color: black;
-            transform: translateX(-2cm);
+            margin: 20px 0;
+            flex-shrink: 0; 
         }
-
-        .cell-1-1,
-        .cell-2-1 {
-            border: 1px solid black;
-        }
-
-        .no-bottom-border {
-            border-bottom: none;
-        }
-
-        .cell-3-merged {
-            text-align: center;
-            border: 1px solid black;
-            font-weight: bolder;
-        }
-
-        .checkbox {
+        .autocomplete {
+            position: relative;
             display: inline-block;
-            width: 8px;
-            height: 8px;
-            border: 1px solid black;
-            margin-right: 3px;
+            width: 300px; 
         }
-
-        input[type="number"] {
-            width: calc(100% - 12px);
-            height: calc(100% - 12px);
-            padding: 6px;
-            box-sizing: border-box;
+        #searchInput {
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-family: inherit;
+        }
+        #searchButton {
+            padding: 10px 20px;
+            border-radius: 5px;
             border: none;
-            text-align: center;
-            font-family: 'Vazir', sans-serif;
-            font-size: 0.7em;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+            vertical-align: top;
+        }
+        #searchButton:hover {
+            background-color: #0056b3;
+        }
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+        }
+        .autocomplete-items div {
+            padding: 10px;
+            cursor: pointer;
+            background-color: #fff; 
+            border-bottom: 1px solid #d4d4d4; 
+        }
+        .autocomplete-items div:hover {
+            background-color: #e9e9e9; 
+        }
+        .autocomplete-active {
+            background-color: DodgerBlue !important; 
+            color: #ffffff; 
         }
 
-        .product-description {
-            font-size: 0.7em;
-            text-align: right;
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
         }
-
-        #productTable tbody tr:nth-child(8) td, /* ردیف 11 سابق */
-        #productTable tbody tr:last-child td,
-        #productTable tbody tr:nth-child(6) td.merged, /* ردیف 9 سابق */
-        #productTable tbody tr:nth-child(5) td:last-child { /* Apply B Nazanin font to row 4 last td */
-            font-family: 'B Nazanin', sans-serif;
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
         }
-
-        /* Ensure full text is shown in مشخصات کالا و خدمات and جمع مبلغ کل */
-        #productTable tbody tr:nth-child(9) td:nth-child(1), /* ردیف 12 سابق */
-        #productTable tbody tr:nth-child(9) td:nth-child(9) /* ردیف 12 سابق */
-         {
-            white-space: normal;
-            overflow: visible;
-            text-overflow: clip;
-        }
-
-        /* Increase width of the first column (ردیف) */
-        #productTable td:nth-child(1),
-        #productTable th:nth-child(1) {
-            width: 3cm; /* Set width of the first column to 3cm */
-        }
-
-        /* حذف تمام خطوط داخلی ردیف های چهارم، پنجم و ششم */
-        #productTable tbody tr:nth-child(4) td, /* ردیف چهارم */
-        #productTable tbody tr:nth-child(5) td, /* ردیف پنجم */
-        #productTable tbody tr:nth-child(6) td { /* ردیف ششم */
-            border: none !important;
-            padding-top: 2px !important; /* کاهش padding بالا */
-            padding-bottom: 2px !important; /* کاهش padding پایین */
-        }
-
-        /* اضافه کردن خط بالا به ردیف چهارم */
-        /* #productTable tbody tr:nth-child(5) {
-            border-top: 0px solid black !important;
-        } */
-
-        /* حذف خط پایین سلول 4-1 */
-        #productTable tbody tr:nth-child(4) td:nth-child(1) {
-            border-bottom: none !important;
-        }
-
-        /* حذف خط بالای ردیف مشخصات خریدار */
-        #productTable tbody tr:nth-child(7) td { /* ردیف 8 سابق */
-            border-top: none !important;
-        }
-
-        /* حذف خط بالای ردیف تلفن و شماره ملی */
-        #productTable tbody tr:nth-child(6) td { /* ردیف 7 سابق */
-            border-top: none !important;
-        }
-
-        /* استایل‌های جدید برای ردیف‌های 3، 4، 5 و 6 */
-        #productTable tbody tr:nth-child(3),
-        #productTable tbody tr:nth-child(4),
-        #productTable tbody tr:nth-child(5),
-        #productTable tbody tr:nth-child(6) {
-            border-left: 1px solid black !important;
-            border-right: 1px solid black !important;
-        }
-
-        #productTable tbody tr:nth-child(3) {
-            border-top: 1px solid black !important;
-            border-bottom: 1px solid black !important; /* بازگرداندن خط پایین سربرگ فروشنده */
-        }
-
-        /* حذف خط پایین از ردیف ششم */
-        #productTable tbody tr:nth-child(6) {
-            border-bottom: none !important; /* حذف خط پایین */
-        }
-
-        #productTable tbody tr:nth-child(3) td,
-        #productTable tbody tr:nth-child(4) td,
-        #productTable tbody tr:nth-child(5) td,
-        #productTable tbody tr:nth-child(6) td {
-            border: none !important;
-        }
-
-        /* استایل برای ردیف مشخصات فروشنده */
-        .seller-info-row-bottom-border {
-            /* این کلاس دیگر استفاده نمی‌شود */
-        }
-
-        .seller-info-text {
-            text-align: center;
-        }
-
-        /* استایل برای ردیف های 8 تا 13 */
-        #productTable tbody tr:nth-child(7) td, /* ردیف 8 سابق */
-        #productTable tbody tr:nth-child(8) td, /* ردیف 9 سابق */
-        #productTable tbody tr:nth-child(9) td, /* ردیف 10 سابق */
-        #productTable tbody tr:nth-child(10) td, /* ردیف 11 سابق */
-        #productTable tbody tr:nth-child(11) td, /* ردیف 12 سابق */
-        #productTable tbody tr:nth-child(12) td { /* ردیف 13 سابق */
-            border: none !important;
-        }
-        #productTable tbody tr:nth-child(), /* ردیف 8 سابق */
-        #productTable tbody tr:nth-child(6), /* ردیف 8 سابق */
-        #productTable tbody tr:nth-child(5), /* ردیف 8 سابق */
-        #productTable tbody tr:nth-child(3), /* ردیف 8 سابق */
-        #productTable tbody tr:nth-child(4), /* ردیف 8 سابق */
-        #productTable tbody tr:nth-child(7), /* ردیف 8 سابق */
-        #productTable tbody tr:nth-child(8), /* ردیف 9 سابق */
-        #productTable tbody tr:nth-child(9), /* ردیف 10 سابق */
-        #productTable tbody tr:nth-child(10), /* ردیف 11 سابق */
-        #productTable tbody tr:nth-child(11), /* ردیف 12 سابق */
-        #productTable tbody tr:nth-child(12) { /* ردیف 13 سابق */
-            border-left: 1px solid black !important;
-            border-right: 1px solid black !important;
+        .close {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
             font-weight: bold;
         }
-
-        #productTable tbody tr:nth-child(7) { /* ردیف 8 سابق */
-            border-top: 1px solid black !important; /* بازگرداندن خط بالای ردیف خریدار */
-            border-bottom: 1px solid black !important; /* بازگرداندن خط پایین سربرگ خریدار */
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #modal-body table {
+            width: 100%;
+            margin-top: 15px;
         }
 
-        #productTable tbody tr:nth-child(12) { /* ردیف 13 سابق */
-            /* این خط برای ردیف توضیحات بود، الان باید برای ردیف قبل از آن باشد */
+        /* Responsive styles for mobile */
+        @media only screen and (max-width: 768px) {
+            .open-sidebar-btn {
+                font-size: 24px; 
+                top: 15px;
+                right: 15px;
+            }
+            .sidebar.active {
+                width: 70vw; 
+            }
+            body.sidebar-open .main-content {
+                margin-right: 70vw; 
+            }
+            .closebtn {
+                font-size: 30px;
+                left: 15px;
+                margin-left: 0;
+            }
+            .main-content {
+                padding: 10px; 
+            }
+            .page-container {
+                width: 98vw; 
+                height: auto; 
+                min-height: auto;
+                padding: 10px; 
+                margin: 10px auto; 
+                box-shadow: none; 
+            }
+            table {
+                font-size: 0.7em; 
+                overflow-x: auto; 
+                display: block; 
+                white-space: nowrap; 
+            }
+            th, td {
+                padding: 5px; 
+            }
+            .autocomplete {
+                width: 95%; 
+            }
+            h2 {
+                font-size: 1em; 
+            }
         }
 
-        /* اضافه کردن خط پایین به ردیف تلفن و نمابر خریدار */
-        #productTable tbody tr:nth-child(10) { /* ردیف 10 سابق */
-            border-bottom: 1px solid black !important;
-        }
-
-        /* حذف padding پایین ردیف تلفن و نمابر خریدار */
-        #productTable tbody tr:nth-child(10) td { /* ردیف 10 سابق */
-            padding-bottom: 0 !important;
-        }
-
-        /* حذف خط پایین ردیف چهارم */
-        #productTable tbody tr:nth-child(4) {
-            border-bottom: none !important;
-        }
-
-}
-
-        /* اضافه کردن خط بالا به ردیف هفتم */
-        #productTable tbody tr:nth-child(7) {
-            border-top: 1px solid black !important; /* تکراری بود، حذف شد */
-        }
-
-        /* استایل برای سربرگ مشخصات کالا */
-        #productTable tbody tr:nth-child(11) {
-            border-bottom: 1px solid black !important; /* بازگرداندن خط پایین سربرگ کالا */
-        }
-
-        /* استایل برای خط پایین ردیف جمع کل */
-        #productTable tbody tr:nth-child(13) {
-            /* border-bottom: 1px solid black !important; این خط را حذف کنید */
-        }
-
-        /* استایل برای خط پایین ردیف آخر (مهر و امضاء) */
-        #productTable tbody tr:last-child {
-            border-bottom: 1px solid black !important;
-        }
-
-        /* استایل برای حذف حاشیه تکست باکس ها */
-        #productTable input[type="text"] {
-            border: none;
-            background-color: transparent; /* برای اینکه پس زمینه هم سفید نشود اگر جدول رنگی داشت */
-            font-family: 'B Nazanin', sans-serif; /* اعمال فونت B Nazanin به متن داخل تکست باکس */
-            text-align: right; /* اعمال راست چین به متن داخل تکس باکس */
-        }
-
-        /* اعمال فونت و سایز به ردیف های مورد نظر */
-        #productTable tbody tr:nth-child(3) td, /* ردیف سوم */
-        #productTable tbody tr:nth-child(4) td,
-        #productTable tbody tr:nth-child(5) td,
-        #productTable tbody tr:nth-child(6) td,
-        #productTable tbody tr:nth-child(7) td, /* ردیف هفتم */
-        #productTable tbody tr:nth-child(8) td,
-        #productTable tbody tr:nth-child(9) td,
-        #productTable tbody tr:nth-child(10) td,
-        #productTable tbody tr:nth-child(11) td {
-            font-family: 'B Nazanin', sans-serif !important;
-            font-size: 0.8em !important;
-            font-weight: bold !important; /* اضافه کردن بولد */
-        }
-
-        #productTable tbody tr {
-            break-inside: avoid; /* از شکستن ردیف‌ها در وسط صفحه جلوگیری می‌کند */
-        }
-
-        /* استایل های جدید برای border */
-        #productTable tbody tr:nth-child(1) td:nth-child(1) {
-            border: 1px solid black;
-            border-right: none; /* حذف خط جدا کننده از سلول اول */
-        }
-
-        /* حذف بوردر از سلول دوم */
-        #productTable tbody tr:nth-child(1) td:nth-child(2) {
-            border: none;
-        }
-
-        #productTable tbody tr:nth-child(1) td:nth-child(3) {
-            border: 1px solid black;
-            border-left: none; /* حذف خط جدا کننده از سلول سوم */
-        }
-
-        #productTable tbody tr:nth-child(2) td:nth-child(1) {
-            border: 1px solid black;
-            border-right: none; /* حذف خط جدا کننده از سلول اول */
-        }
-
-        #productTable tbody tr:nth-child(2) td:nth-child(2) {
-            border: 1px solid black;
-            border-left: none;
-            border: none;
-            text-align: right; /* راست چین کردن محتوا */
-        }
-
-        #productTable tbody tr:nth-child(2) td:nth-child(3) {
-            border: 1px solid black;
-            border-left: none; /* حذف خط جدا کننده از سلول سوم */
-        }
-
-        #productTable tbody tr:nth-child(1) td:nth-child(1) {
-            padding-right: 06px; /* تنظیم پدینگ راست برای هم‌تراز کردن با "تاریخ" */
-            text-align: right; /* بازگرداندن تراز متن به راست در صورت نیاز */
-            transform: translateX(-2cm); /* انتقال به چپ */
-        }
-
-        #productTable tbody tr:nth-child(2) td:nth-child(2) {
-            border: 1px solid black;
-            border-left: none;
-            border: none;
-            text-align: right;
-            transform: translateX(-2cm); /* انتقال به چپ */
-        }
-
-        .rtl-input {
-            direction: rtl; /* تنظیم جهت متن به راست به چپ */
-            text-align: right; /* اطمینان از راست‌چین بودن متن */
-        }
-
-        /* استایل برای وسط قرار دادن نوشته های سلول نهم از ردیف های با شناسه 1000 تا 1030 */
-        #productTable tr[id^="10"] td:nth-child(9) {
-            text-align: center;
+        /* Print styles */
+        @media print {
+            @page {
+                size: A4 landscape; 
+                margin: 10mm; 
+            }
+            body {
+                margin: 0; 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact;
+                display: block; 
+                padding: 0;
+                overflow-x: visible; 
+            }
+            .sidebar, .open-sidebar-btn, .overlay, .search-container, #searchButton, .modal {
+                display: none; 
+            }
+            table, th, td {
+                border-color: #000 !important; 
+            }
+            #modal-body table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 0; 
+            }
+            .page-container {
+                width: auto;
+                min-height: auto;
+                box-shadow: none;
+                padding: 0;
+                margin: 0;
+            }
+            .main-content {
+                margin-right: 0 !important; 
+                padding: 0;
+            }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 </head>
-
 <body>
-    <div id="login-container">
-        <h2>Login</h2>
-        <div id="error-message" style="display: none;">Invalid username or password.</div>
-        <form id="login-form">
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username">
+    
+    <button class="open-sidebar-btn" id="openSidebarBtn">
+        <i class="fas fa-bars"></i> 
+    </button>
+
+    
+    <div class="sidebar" id="mySidebar">
+        <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a> 
+        <h3>Menu</h3>
+        <ul>
+            <li><a href="#" data-product="razavi"><i class="fas fa-box-open"></i> محصولات رضوی</a></li>
+            <li><a href="#" data-product="gildokht"><i class="fas fa-seedling"></i> محصولات گیل‌دخت</a></li>
+            <li><a href="#" data-product="khatomeh"><i class="fas fa-cookie"></i> محصولات خاتومه</a></li>
+        </ul>
+    </div>
+
+    
+    <div class="overlay" id="myOverlay"></div>
+
+    
+    <div class="main-content" id="mainContent">
+        <div class="page-container" id="pageContainer">
+            <div id="welcomeMessage">
+                <h1>Welcome!</h1>
+                <p style="font-size: 1.1em;">Please select a product from the menu to view the information.</p>
+                <div id="shamsiDateTime" style="margin-top: 30px; font-size: 1.2em; font-weight: bold;"></div>
+                <p style="margin-top: 10px; font-size: 1em; color: #555;">Made by Ali Asemani</p>
             </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password">
-            </div>
-            <button type="submit">Login</button>
-        </form>
+            <div id="productSpecificContent" style="display: none;">
+                </div>
+        </div> 
+    </div> 
+
+    <div id="resultModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="modal-body"></div>
+      </div>
     </div>
 
-    <div id="main-content">
-        <label for="productSelect">Select Product:</label>
-        <select id="productSelect" multiple size="9">
-            <option value="شکر سفید ۹۰۰ گرمی">شکر سفید ۹۰۰ گرمی</option>
-        </select>
-        <button onclick="addSelectedProducts()">Add Selected Products</button>
-        <button onclick="removeProduct()">Remove Product</button>
-        <button onclick="addProductBeforeLastRow()">Add Product Before Last Row</button>
-        <button onclick="downloadPDF()">Download as PDF</button>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Modal elements
+    const modal = document.getElementById('resultModal');
+    const closeModal = document.getElementsByClassName('close')[0];
+    const modalBody = document.getElementById('modal-body');
 
-        <div id="preview">
-            <table id="productTable">
-                <tbody>
-                    <tr>
-                        <td colspan="3" class="right-align no-bottom-border no-border" style="text-align: center; padding-left: 15px; transform: translateX(-2cm);">
-                            <input type="text" class="center-align rtl-input" style="box-sizing: border-box; text-align: center; width: 2.2cm;"> : شماره سریال
-                        </td>
-                        <td colspan="9" class="merged no-border" style="text-align: center;">صورتحساب فروش کالا و خدمات</td>
-                    </tr>
-                    <tr>
-                        <td class="right-align no-border"></td>
-                        <td class="no-border" style="text-align: center; transform: translateX(-2cm);">
-                            <input type="text" class="right-align rtl-input" style="box-sizing: border-box; text-align: center; width: 2.5cm;"> : تاریخ
-                        </td>
-                        <td class="right-align no-border"></td>
-                        <td colspan="9" class="no-border"></td>
-                    </tr>
-                    <tr class="seller-info-row-bottom-border">
-                        <td colspan="11" class="seller-info-text">مشخصات فروشنده</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td colspan="1" class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;" value="۱۱۳۱"> : شماره ثبت</td>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;"> : شماره اقتصادی</td>
-                        <td colspan="6" class="right-align"><input type="text" class="right-align" style="width: 150px; box-sizing: border-box;" value="شرکت مسیر سبز تندرستی"> : نام شخص حقیقی/ حقوقی</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3 65" class="right-align"><input type="text" class="right-align" style="width: 70px; box-sizing: border-box;" value="۱۴۰۱۱۶۶۸۱۴۴"> : شناسه ملی </td>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 70px; box-sizing: border-box;" value="۹۳۶۱۴۷۴۱۰۳"> : کد پستی ده رقمی  </td>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 58px; box-sizing: border-box;" value="گلبهار"> : شهرستان </td>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 90px; box-sizing: border-box;" value="خراسان رضوی">: نشانی کامل : استان </td>
-                    </tr>
-                    <tr>
-                        <td class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;" value="-"> : نمابر</td>
-                        <td class="right-align"><input type="text" class="right-align" style="width: 70px; box-sizing: border-box;" value="۰۵۱-۳۸۳۱۹۹۲۹"> : تلفن</td>
-                        <td class="right-align"><input type="text" class="right-align" style="width: 90px; box-sizing: border-box;" value="۱۴۰۱۱۶۶۸۱۴۴"> : شماره ملی</td>
-                        <td colspan="8" class="right-align"><input type="text" class="right-align" style="width: 400px; box-sizing: border-box;" value="میدان ابن سینا ,،بلوار چهارباغ ،پلاک۲۰۱ ،مجتمع پزشکان پردیس ،طبقه ۲، واحد ۱"> : نشانی</td>
-                    </tr>
-                    <tr>
-                        <td colspan="11" class="seller-info-text">مشخصات خریدار</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td colspan="-1" class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;" value="-"> : شماره ثبت</td>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;" value="-"> : شماره اقتصادی</td>
-                        <td colspan="6" class="right-align"><input type="text" class="right-align" style="width: 200px; box-sizing: border-box;" value="شرکت گلستان اختر نیک ( سهامی خاص )"> : نام شخص حقیقی/ حقوقی</td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 70px; box-sizing: border-box;" value="۱۴۰۱۱۳۹۳۸۲۶"> : شناسه ملی </td>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 70px; box-sizing: border-box;" value="۹۱۸۵۶۶۵۸۳۲"> : کد پستی ده رقمی  </td>
-                        <td colspan="3" class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;" value="مشهد"> : شهرستان </td>
-                        <td colspan="7" class="right-align"><input type="text" class="right-align" style="width: 73px; box-sizing: border-box;" value="خراسان رضوی">: نشانی کامل : استان </td>
-                    </tr>
-                    <tr>
-                        <td class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;" value="-"> : نمابر</td>
-                        <td class="right-align"><input type="text" class="right-align" style="width: 50px; box-sizing: border-box;" value="-"> : تلفن</td>
-                        <td class="right-align"><input type="text" class="right-align" style="width: 70px; box-sizing: border-box;" value="-"> : شماره ملی</td>
-                        <td colspan="9" class="right-align"><input type="text" class="right-align" style="width: 450px; box-sizing: border-box;" value="بلوار فلسطین ،بین فلسطین ۱۵و ۱۷"> : نشانی</td>
-                    </tr>
-                    <tr style="font-family: 'B Nazanin', sans-serif;">
-                        <td colspan="11" class="cell-3-merged">مشخصات کالا یا خدمات مورد معامله</td>
-                    </tr>
-                    <tr style="font-family: 'B Nazanin', sans-serif;">
-                        <th>جمع مبلغ کل بعلاوه جمع<br>مالیات و عوارض(ریال)</th>
-                        <th>جمع مالیات و<br>عوارض (ریال)</th>
-                        <th>مبلغ کل پس از تخفیف<br>(ریال)</th>
-                        <th>مبلغ تخفیف<br>(ریال)</th>
-                        <th>مبلغ کل(ریال)</th>
-                        <th>مبلغ واحد<br>(ریال)</th>
-                        <th>تعداد<br>(عدد)</th>
-                        <th>کارتن</th>
-                        <th>شرح کالا یا خدمات</th>
-                        <th>کد کالا</th>
-                        <th><b>ردیف</b></th>
-                    </tr>
-                    <tr>
-                        <td id="۱۶۱۰۱"></td>
-                        <td id="۱۶۱۰۲"></td>
-                        <td id="۱۶۱۰۳"></td>
-                        <td id="۱۶۱۰۴"></td>
-                        <td id="۱۶۱۰۵"></td>
-                        <td colspan="6" class="right-align"><b>جمع کل:</b></td>
-                    </tr>
-                    <tr style="font-family: 'B Nazanin', sans-serif;">
-                        <td colspan="5" class="right-align"><b>: توضیحات </b></td>
-                        <td colspan="6" class="right-align">
-                            <b>شرایط و نحوه فروش:</b>
-                            <span class="checkbox"></span> نقدی
-                            <span class="checkbox"></span> غیر نقدی
-        </td>
-    </tr>
-    <tr style="font-family: 'B Nazanin', sans-serif;">
-    <td colspan="5" class="right-align"><b>: مهر و امضاء خریدار</b></td>
-    <td colspan="6" class="right-align"><b>: مهر و امضاء فروشنده</b></td>
-    </tr>
-    </tbody>
-    </table>
-    </div>
-    </div>
-    <script>
-        // User credentials
-        const validUsername = "Asemani";
-        const validPassword = "1610";
+    // Sidebar elements
+    const openSidebarBtn = document.getElementById('openSidebarBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const mySidebar = document.getElementById('mySidebar');
+    const myOverlay = document.getElementById('myOverlay');
+    const mainContent = document.getElementById('mainContent');
 
-        const loginContainer = document.getElementById("login-container");
-        const mainContent = document.getElementById("main-content");
-        const loginForm = document.getElementById("login-form");
-        const errorMessage = document.getElementById("error-message");
+    // Content areas
+    const welcomeMessageDiv = document.getElementById('welcomeMessage');
+    const productSpecificContentDiv = document.getElementById('productSpecificContent');
+    const shamsiDateTimeDiv = document.getElementById('shamsiDateTime');
 
-        loginForm.addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            const usernameInput = document.getElementById("username").value;
-            const passwordInput = document.getElementById("password").value;
-
-            if (usernameInput === validUsername && passwordInput === validPassword) {
-                loginContainer.style.display = "none";
-                mainContent.style.display = "block";
-                document.body.style.backgroundColor = "#f4f4f4"; // Restore main content background
-                document.body.style.color = "#333"; // Restore main content text color
-            } else {
-                errorMessage.style.display = "block";
-            }
-        });
-
-        var productDetails = {
-            'شکر سفید ۹۰۰ گرمی': { code: '6260303700388', price: 508000 }
+    // --- Shamsi Date and Time ---
+    function getShamsiDate() {
+        const now = new Date();
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // Use 24-hour format
         };
+        // Use 'fa-IR' locale for Persian/Shamsi date
+        const shamsiDate = new Intl.DateTimeFormat('fa-IR', options).format(now);
+        shamsiDateTimeDiv.textContent = shamsiDate;
+    }
 
-        var startRowNumber = 1000;
-        var rowCounter = 0; // Initialize a separate counter for row numbers
+    // Update time every second
+    setInterval(getShamsiDate, 1000);
+    // Initial call
+    getShamsiDate();
 
-        function generateRandomNumber(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+    // --- Product Data (simulated) ---
+    const productsData = {
+        razavi: `
+            <div class="search-container">
+                <div class="autocomplete">
+                    <input type="text" id="searchInput" placeholder="بخشی از نام محصول را وارد کنید...">
+                </div>
+                <button id="searchButton">جستجو</button>
+            </div>
+            <h2>قیمت محصولات رضوی مرداد ۱۴۰۴ با احتساب ۱۰ درصد مالیات ارزش افزوده</h2>
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>نام محصول</th>
+                        <th>وزن گرم</th>
+                        <th>نوع بسته بندی</th>
+                        <th>قیمت تولید (ریال)</th>
+                        <th>قیمت مصرف کننده (ریال)</th>
+                        <th>پروانه ساخت</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>۱</td><td>پودر فلفل سیاه</td><td>۱۰۰</td><td>پت</td><td>۱,۵۲۱,۵۲۰</td><td>۱,۹۰۱,۵۶۴</td><td>۶۸۷۷/ظ/۵۰</td></tr>
+                    <tr><td>۲</td><td>پودر فلفل قرمز</td><td>۱۰۰</td><td>پت</td><td>۷۵۵,۶۵۱</td><td>۹۴۴,۵۶۴</td><td>مجاز</td></tr>
+                    <tr><td>۳</td><td>پودر آویشن</td><td>۵۰</td><td>پت</td><td>۱,۰۳۵,۶۵۱</td><td>۱,۲۹۴,۵۶۴</td><td>۶۹۰۹/ظ/۵۰</td></tr>
+                    <tr><td>۴</td><td>پودر سماق</td><td>۱۰۰</td><td>پت</td><td>۱,۰۲۷,۶۵۱</td><td>۱,۲۸۴,۵۶۴</td><td>۶۸۴۷/ظ/۵۰</td></tr>
+                    <tr><td>۵</td><td>پودر دارچین</td><td>۱۰۰</td><td>پت</td><td>۷۲۳,۶۵۱</td><td>۹۰۴,۵۶۴</td><td>۵۰/ظ/۶۸</td></tr>
+                    <tr><td>۶</td><td>پودر کاری</td><td>۱۰۰</td><td>پت</td><td>۷۹۵,۶۵۱</td><td>۹۹۴,۵۶۴</td><td>مجاز</td></tr>
+                    <tr><td>۷</td><td>پودر زنجبیل</td><td>۱۰۰</td><td>پت</td><td>۹۴۷,۶۵۱</td><td>۱,۱۸۴,۵۶۴</td><td>۶۸۷۶/ظ/۵۰</td></tr>
+                    <tr><td>۸</td><td>پودر سیر</td><td>۱۰۰</td><td>پت</td><td>۸۹۹,۶۵۱</td><td>۱,۱۲۴,۵۶۴</td><td>مجاز</td></tr>
+                    <tr><td>۹</td><td>پودر دارچین</td><td>۱۰۰</td><td>پت</td><td>۷۲۳,۶۵۱</td><td>۹۰۴,۵۶۴</td><td>مجاز</td></tr>
+                </tbody>
+            </table>
+        `,
+        gildokht: `
+            <div class="search-container">
+                <div class="autocomplete">
+                    <input type="text" id="searchInput" placeholder="بخشی از نام محصول را وارد کنید...">
+                </div>
+                <button id="searchButton">جستجو</button>
+            </div>
+            <h2>لیست قیمت محصولات گیل دخت خرداد ۱۴۰۴ با احتساب ۱۰ درصد مالیات ارزش افزوده</h2>
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>نام محصول</th>
+                        <th>نوع بسته بندی</th>
+                        <th>وزن</th>
+                        <th>قیمت تولید</th>
+                        <th>قیمت مصرف کننده</th>
+                        <th>پروانه ساخت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>۱</td><td>پودر فلفل سیاه</td><td>پت</td><td>۹۰ گرم</td><td>۱,۴۸۸,۷۲۰</td><td>۱,۸۶۰,۹۰۰</td><td>۵۰/۲۴۱۷۳</td></tr>
+                    <tr><td>۲</td><td>پودر فلفل قرمز</td><td>پت</td><td>۹۰ گرم</td><td>۷۲۹,۵۲۰</td><td>۹۱۱,۹۰۰</td><td>۵۰/۲۴۲۷۲</td></tr>
+                    <tr><td>۳</td><td>آویشن</td><td>پت</td><td>۵۰ گرم</td><td>۶۵۹,۱۲۰</td><td>۸۲۳,۹۰۰</td><td>۵۰/۲۴۱۰۳</td></tr>
+                    <tr><td>۴</td><td>پودر سماق</td><td>پت</td><td>۹۰ گرم</td><td>۷۷۳,۵۲۰</td><td>۹۶۶,۹۰۰</td><td>۵۰/۲۴۱۰۴</td></tr>
+                    <tr><td>۵</td><td>پودر دارچین</td><td>پت</td><td>۹۰ گرم</td><td>۷۶۴,۷۲۰</td><td>۹۵۵,۹۰۰</td><td>۵۰/۲۴۱۰۸</td></tr>
+                    <tr><td>۶</td><td>زرد چوبه</td><td>پت</td><td>۹۰ گرم</td><td>۶۲۳,۹۲۰</td><td>۷۹۹,۹۰۰</td><td>۵۰/۲۴۱۰۶</td></tr>
+                    <tr><td>۷</td><td>پودر کاری</td><td>پت</td><td>۹۰ گرم</td><td>۸۱۷,۵۲۰</td><td>۱,۰۲۱,۹۰۰</td><td>۵۰/۲۴۲۷۳</td></tr>
+                    <tr><td>۸</td><td>زنجبیل</td><td>پت</td><td>۹۰ گرم</td><td>۹۴۰،۷۲۰</td><td>۱,۱۷۵,۹۰۰</td><td>۵۰/۲۴۱۰۹</td></tr>
+                    <tr><td>۹</td><td>پودر سیر</td><td>پت</td><td>۱۰۰ گرم</td><td>۹۹۳,۵۲۰</td><td>۱,۲۴۱,۹۰۰</td><td>۵۰/۲۴۱۱۰</td></tr>
+                    <tr><td>۱۰</td><td>شکر</td><td>۹۰۰ گرم</td><td>۹۰۰ گرم</td><td>۸۰۱,۰۰۰</td><td>۸۹۰,۰۰۰</td><td>۵۰/۳۰۵۲۰</td></tr>
+                </tbody>
+            </table>
+        `,
+        khatomeh: `
+            <div class="search-container">
+                <div class="autocomplete">
+                    <input type="text" id="searchInput" placeholder="بخشی از نام محصول را وارد کنید...">
+                </div>
+                <button id="searchButton">جستجو</button>
+            </div>
+            <h2>لیست قیمت محصولات خاتومه (لطفاً ستون‌های خالی را تکمیل کنید)</h2>
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>نام محصول</th>
+                        <th>وزن گرم</th>
+                        <th>نوع بسته بندی</th>
+                        <th>قیمت تولید (ریال)</th>
+                        <th>قیمت مصرف کننده (ریال)</th>
+                        <th>پروانه ساخت</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>۱</td><td>پودر زردچوبه</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۲</td><td>پودر سیر</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۳</td><td>پودر فلفل قرمز</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۴</td><td>پودر سماق</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۵</td><td>پودر دارچین</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۶</td><td>پودر ادویه کاری</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۷</td><td>پودر آویشن</td><td>۶۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۸</td><td>پودر زنجبیل</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۹</td><td>پودر فلفل سیاه</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۰</td><td>پودر سیر</td><td>۱۲۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۱</td><td>پودر سیر</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۲</td><td>پودر دارچین</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۳</td><td>پودر فلفل قرمز</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۴</td><td>پودر ادویه کاری</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۵</td><td>پودر سیر</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۶</td><td>پودر سماق</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۷</td><td>پودر دارچین</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۸</td><td>پودر فلفل قرمز</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۱۹</td><td>پودر ادویه کاری</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>۲۰</td><td>پودر آویشن</td><td>۳۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                </tbody>
+            </table>
+        `
+    };
 
-        function adjustRowHeight() {
-            var table = document.getElementById("productTable");
-            for (var i = 0; i < table.rows.length; i++) {
-                if (table.rows[i].id >= 1000 && table.rows[i].id <= 1030) {
-                    var cells = table.rows[i].cells;
-                    if (cells.length > 7) {
-                        // افزایش سایز سلول 8 (اندیس 7)
-                        var inputElement = cells[8].querySelector('input[type="text"]');
-                        if (inputElement) {
-                            var currentWidth = window.getComputedStyle(inputElement).width;
-                            var newWidth = (parseFloat(currentWidth) + 0.5) + 'em';
-                            inputElement.style.width = newWidth;
-                        }
+    function loadProductContent(productKey) {
+        welcomeMessageDiv.style.display = 'none'; // Hide welcome message
+        productSpecificContentDiv.innerHTML = productsData[productKey]; // Load content
+        productSpecificContentDiv.style.display = 'block'; // Show product content
+
+        // Re-initialize search and autocomplete for the newly loaded content
+        const newSearchInput = document.getElementById('searchInput');
+        const newSearchButton = document.getElementById('searchButton');
+        const newProductTable = document.querySelector('#productSpecificContent #productTable'); // Get the table itself
+        
+        // Only run search/autocomplete setup if a table is present for the loaded content
+        if (newProductTable) {
+            const newMainTableBody = newProductTable.querySelector('tbody');
+            if (newSearchInput && newSearchButton && newMainTableBody) {
+                const productRows = Array.from(newMainTableBody.getElementsByTagName('tr'));
+                const productNames = productRows.map(row => row.getElementsByTagName('td')[1].textContent.trim());
+
+                // Attach event listeners to the new elements
+                newSearchButton.onclick = () => performSearch(newSearchInput, newMainTableBody);
+                newSearchInput.addEventListener('keyup', (event) => {
+                    if (event.key === 'Enter') {
+                        performSearch(newSearchInput, newMainTableBody);
                     }
-                }
+                });
+                autocomplete(newSearchInput, productNames);
             }
-        }
 
-        function increaseTextBoxHeight() {
-            var table = document.getElementById("productTable");
-            var targetRows = [3, 4, 5, 7, 8, 9]; // Indices for rows 4, 5, 6, 8, 9, 10
-
-            targetRows.forEach(function(rowIndex) {
-                if (table.rows[rowIndex]) {
-                    var row = table.rows[rowIndex];
-                    for (var i = 0; i < row.cells.length; i++) {
-                        var cell = row.cells[i];
-                        var inputElement = cell.querySelector('input[type="text"]');
-                        if (inputElement) {
-                            var currentHeight = window.getComputedStyle(inputElement).height;
-                            var newHeight = (parseFloat(currentHeight) + 1) + 'px'; // Adding 1 pixel for better compatibility
-                            inputElement.style.height = newHeight;
-                        }
-                    }
-                }
+            // Add click event listener to table rows for highlighting
+            const rows = newProductTable.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('click', function() {
+                    // Remove highlight from all other rows in this table
+                    rows.forEach(r => r.classList.remove('highlight'));
+                    // Add highlight to the clicked row
+                    this.classList.add('highlight');
+                });
             });
         }
+        closeNav(); // Close sidebar after selection
+    }
 
-        function addSelectedProducts() {
-            var table = document.getElementById("productTable");
-            var productSelect = document.getElementById("productSelect");
-            var selectedProducts = Array.from(productSelect.selectedOptions).map(option => option.value);
-
-            selectedProducts.forEach(function(selectedProduct) {
-                var productAlreadyExists = false;
-                for (var i = 1; i < table.rows.length - 3; i++) {
-                    if (table.rows[i].cells[8] && table.rows[i].cells[8].innerHTML === selectedProduct) {
-                        productAlreadyExists = true;
-                        break;
-                    }
-                }
-                if (!productAlreadyExists) {
-                    addProductToTable(selectedProduct);
-                }
-            });
-            calculateTotal();
-            adjustRowHeight(); // فراخوانی تابع تنظیم ارتفاع بعد از افزودن محصولات
-            increaseTextBoxHeight(); // افزایش ارتفاع تکست باکس ها بعد از افزودن محصولات
+    // Function to perform search (now takes input and tbody elements)
+    const performSearch = (inputElem, tableBodyElem) => {
+        const query = inputElem.value.trim().toLowerCase();
+        if (!query) {
+            alert("لطفاً نام محصولی را برای جستجو وارد کنید.");
+            return;
         }
 
-        function addProductToTable(selectedProduct) {
-            var table = document.getElementById("productTable");
-            var newRow = table.insertRow(table.rows.length - 3);
-            newRow.id = startRowNumber;
+        let resultFound = false;
+        modalBody.innerHTML = '';
 
-            for (var i = 0; i < 8; i++) {
-                var cell = newRow.insertCell(i);
-                if (i === 5) {
-                    // Create a regular cell for the price
-                    cell.innerHTML = productDetails[selectedProduct] && productDetails[selectedProduct].price ? numberFormat(productDetails[selectedProduct].price) : '';
-                } else if (i === 6 || i === 7) {
-                    // ایجاد ورودی متن برای سلول های 7 و 8 و اعمال استایل
-                    var input = document.createElement("input");
-                    input.type = "text"; // تغییر به text
-                    input.value = ""; // مقدار پیشفرض
-                    input.classList.add('rtl-input'); // اعمال کلاس راست‌چین
-                    input.style.border = 'none'; // حذف بوردر
-                    input.style.backgroundColor = 'transparent'; // پس‌زمینه شفاف
-                    input.style.fontFamily = "'B Nazanin', sans-serif"; // اعمال فونت
-                    input.style.textAlign = 'center'; // وسط چین کردن متن
-                    input.style.width = i === 7 ? '1.5cm' : '1cm'; // تغییر به یک و نیم سانتیمتر برای سلول 8
-                    cell.style.width = '100%';
-                    cell.style.boxSizing = 'border-box';
-                    cell.style.verticalAlign = 'middle';
-                    cell.style.textAlign = 'center';
-                    cell.style.paddingTop = '0';
-                    cell.style.paddingBottom = '0';
-                    cell.appendChild(input);
-                } else {
-                    var input = document.createElement("input");
-                    input.type = "number";
-                    input.value = "0";
-                    cell.appendChild(input);
-                    if (i === 0 || i === 1 || i === 2 || i === 3 || i === 4) {
-                        input.addEventListener('input', function () {
-                            calculateRowTotal(this.parentElement.parentElement);
-                        });
-                    }
-                }
+        const resultTable = document.createElement('table');
+        // Clone header from the product table that is currently displayed
+        const currentProductTable = document.querySelector('#productSpecificContent #productTable');
+        const tableHeader = currentProductTable ? currentProductTable.querySelector('thead').cloneNode(true) : null;
+        if (tableHeader) resultTable.appendChild(tableHeader);
+        
+        const resultTbody = document.createElement('tbody');
+        resultTable.appendChild(resultTbody);
+        
+        // Use the rows from the provided tableBodyElem
+        const productRows = Array.from(tableBodyElem.getElementsByTagName('tr'));
+
+        productRows.forEach(row => {
+            const productName = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+            if (productName.includes(query)) {
+                const clonedRow = row.cloneNode(true);
+                resultTbody.appendChild(clonedRow);
+                resultFound = true;
             }
-
-            var cell2 = newRow.insertCell(8);
-            cell2.innerHTML = selectedProduct;
-            cell2.classList.add('product-description');
-            var cell1 = newRow.insertCell(9);
-            cell1.innerHTML = productDetails[selectedProduct] ? productDetails[selectedProduct].code : '';
-            var cell0 = newRow.insertCell(10);
-            rowCounter++;
-            cell0.innerHTML = rowCounter; // Use the separate rowCounter
-            startRowNumber++;
-            adjustRowHeight(); // فراخوانی تابع تنظیم ارتفاع بعد از افزودن ردیف
-            increaseTextBoxHeight(); // افزایش ارتفاع تکست باکس ها بعد از افزودن ردیف
-        }
-
-        function addProduct() {
-            var table = document.getElementById("productTable");
-            var productSelect = document.getElementById("productSelect");
-            var selectedProduct = productSelect.value;
-
-            for (var i = 1; i < table.rows.length - 3; i++) {
-                if (table.rows[i].cells[8] && table.rows[i].cells[8].innerHTML === selectedProduct) {
-                    alert('این محصول قبلا اضافه شده است.');
-                    return;
-                }
-            }
-            addProductToTable(selectedProduct);
-            calculateTotal();
-            adjustRowHeight(); // فراخوانی تابع تنظیم ارتفاع بعد از افزودن محصول
-            increaseTextBoxHeight(); // افزایش ارتفاع تکست باکس ها بعد از افزودن محصول
-        }
-
-        function addProductBeforeLastRow() {
-            var table = document.getElementById("productTable");
-            var productSelect = document.getElementById("productSelect");
-            var selectedProducts = Array.from(productSelect.selectedOptions).map(option => option.value);
-
-            selectedProducts.forEach(function(selectedProduct) {
-                var productAlreadyExists = false;
-                for (var i = 1; i < table.rows.length - 3; i++) {
-                    if (table.rows[i].cells[8] && table.rows[i].cells[8].innerHTML === selectedProduct) {
-                        productAlreadyExists = true;
-                        break;
-                    }
-                }
-                if (!productAlreadyExists) {
-                    addProductToTableBeforeLast(selectedProduct);
-                }
-            });
-            calculateTotal();
-            adjustRowHeight(); // فراخوانی تابع تنظیم ارتفاع بعد از افزودن محصولات
-            increaseTextBoxHeight(); // افزایش ارتفاع تکست باکس ها بعد از افزودن محصولات
-        }
-
-        function addProductToTableBeforeLast(selectedProduct) {
-            var table = document.getElementById("productTable");
-            var newRow = table.insertRow(table.rows.length - 3);
-            newRow.id = startRowNumber;
-
-            for (var i = 0; i < 8; i++) {
-                var cell = newRow.insertCell(i);
-                if (i === 5) {
-                    // Create a regular cell for the price
-                    cell.innerHTML = productDetails[selectedProduct] && productDetails[selectedProduct].price ? numberFormat(productDetails[selectedProduct].price) : '';
-                } else if (i === 6 || i === 7) {
-                    // ایجاد ورودی متن برای سلول های 7 و 8 و اعمال استایل
-                    var input = document.createElement("input");
-                    input.type = "text"; // تغییر به text
-                    input.value = ""; // مقدار پیشفرض
-                    input.classList.add('rtl-input'); // اعمال کلاس راست‌چین
-                    input.style.border = 'none'; // حذف بوردر
-                    input.style.backgroundColor = 'transparent'; // پس‌زمینه شفاف
-                    input.style.fontFamily = "'B Nazanin', sans-serif"; // اعمال فونت
-                    input.style.textAlign = 'center'; // وسط چین کردن متن
-                    input.style.width = i === 7 ? '1.5cm' : '1cm'; // تغییر به یک و نیم سانتیمتر برای سلول 8
-                    cell.style.width = '100%';
-                    cell.style.boxSizing = 'border-box';
-                    cell.style.verticalAlign = 'middle';
-                    cell.style.textAlign = 'center';
-                    cell.style.paddingTop = '0';
-                    cell.style.paddingBottom = '0';
-                    cell.appendChild(input);
-                } else {
-                    var input = document.createElement("input");
-                    input.type = "number";
-                    input.value = "0";
-                    cell.appendChild(input);
-                    if (i === 0 || i === 1 || i === 2 || i === 3 || i === 4) {
-                        input.addEventListener('input', function () {
-                            calculateRowTotal(this.parentElement.parentElement);
-                        });
-                    }
-                }
-            }
-
-            var cell2 = newRow.insertCell(8);
-            cell2.innerHTML = selectedProduct;
-            cell2.classList.add('product-description');
-            var cell1 = newRow.insertCell(9);
-            cell1.innerHTML = productDetails[selectedProduct] ? productDetails[selectedProduct].code : '';
-            var cell0 = newRow.insertCell(10);
-            rowCounter++;
-            cell0.innerHTML = rowCounter;
-            startRowNumber++;
-            adjustRowHeight(); // فراخوانی تابع تنظیم ارتفاع بعد از افزودن ردیف
-            increaseTextBoxHeight(); // افزایش ارتفاع تکست باکس ها بعد از افزودن ردیف
-        }
-
-
-        function removeProduct() {
-            var table = document.getElementById("productTable");
-            var productSelect = document.getElementById("productSelect");
-            var selectedProduct = productSelect.value;
-
-            for (var i = 1; i < table.rows.length - 3; i++) {
-                if (table.rows[i].cells[8] && table.rows[i].cells[8].innerHTML === selectedProduct) {
-                    table.deleteRow(i);
-                    // Recalculate row numbers after deletion
-                    resetRowNumbers();
-                    calculateTotal();
-                    adjustRowHeight(); // فراخوانی تابع تنظیم ارتفاع بعد از حذف ردیف
-                    increaseTextBoxHeight(); // افزایش ارتفاع تکست باکس ها بعد از حذف ردیف
-                    return;
-                }
-            }
-            alert('این محصول در لیست وجود ندارد.');
-        }
-
-        function resetRowNumbers() {
-            var table = document.getElementById("productTable");
-            rowCounter = 0;
-            for (var i = 1; i < table.rows.length - 3; i++) {
-                if (table.rows[i].id >= 1000 && table.rows[i].id <= 1030) {
-                    rowCounter++;
-                    table.rows[i].cells[10].innerHTML = rowCounter;
-                }
-            }
-        }
-
-        function numberFormat(number) {
-            return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
-        function multiplyAndDisplay(num1, num2, displayCell) {
-            if (isNaN(num1) || isNaN(num2)) {
-                displayCell.innerText = "مقدار نامعتبر";
-                return;
-            }
-            var result = Math.ceil(num1 * num2);
-            displayCell.innerText = numberFormat(result);
-        }
-
-        function calculateRowTotal(row) {
-            var cellB6 = row.cells[5];
-            var cellB7 = row.cells[6]; // تغییر از firstChild به خود سلول
-            var cellB8 = row.cells[7]; // دسترسی به سلول هشتم
-            var cellB5 = row.cells[4];
-            var cellB4 = row.cells[3].firstChild;
-            var cellB3 = row.cells[2];
-            var cellB2 = row.cells[1];
-            var cellB1 = row.cells[0].firstChild; // همچنان به اینپوت نیاز داریم
-
-            if (cellB6 && cellB7 && cellB8 && cellB5 && cellB4 && cellB3 && cellB2 && cellB1) {
-                var valueB6 = parseFloat(cellB6.innerText.replace(/,/g, '')) || 0;
-                var valueB7 = parseFloat(cellB7.firstChild.value) || 0; // گرفتن مقدار از اینپوت
-                var valueB8 = parseFloat(cellB8.firstChild.value) || 0; // گرفتن مقدار از اینپوت
-                var valueB1 = parseFloat(cellB1.value) || 0; // همچنان به مقدار تخفیف نیاز داریم
-
-                var product = Math.ceil(valueB6 * valueB7);
-                cellB5.innerText = numberFormat(product);
-
-                var sum = Math.ceil(product + valueB1); // استفاده از مقدار تخفیف
-                cellB3.innerText = numberFormat(sum);
-
-                var tenPercent = Math.ceil(product * 0.1);
-                cellB2.innerText = numberFormat(tenPercent);
-
-                var sumB1 = Math.ceil(product + tenPercent);
-                row.cells[0].innerText = numberFormat(sumB1); // نمایش جمع کل در سلول اول
-            }
-        }
-
-        function calculateTotal() {
-            var table = document.getElementById("productTable");
-            var totalAmountSum = 0;
-            var taxAmountSum = 0;
-            var discountedAmountSum = 0;
-            var discountAmountSum = 0;
-            var totalAmountBeforeDiscountSum = 0;
-
-            for (var rowId = 1000; rowId <= 1030; rowId++) {
-                var row = document.getElementById(rowId.toString());
-                if (row) {
-                    var cellB1 = row.cells[0];
-                    var cellB2 = row.cells[1];
-                    var cellB3 = row.cells[2];
-                    var cellB4Input = row.cells[3].firstChild;
-                    var cellB5 = row.cells[4];
-                    var cellB7Input = row.cells[6].firstChild;
-                    var cellB8Input = row.cells[7].firstChild;
-
-                    if (cellB1) {
-                        totalAmountSum += parseFloat(cellB1.innerText.replace(/,/g, '')) || 0;
-                    }
-                    if (cellB2) {
-                        taxAmountSum += parseFloat(cellB2.innerText.replace(/,/g, '')) || 0;
-                    }
-                    if (cellB3) {
-                        discountedAmountSum += parseFloat(cellB3.innerText.replace(/,/g, '')) || 0;
-                    }
-                    if (cellB4Input) {
-                        discountAmountSum += parseFloat(cellB4Input.value) || 0;
-                    }
-                    if (cellB5) {
-                        totalAmountBeforeDiscountSum += parseFloat(cellB5.innerText.replace(/,/g, '')) || 0;
-                    }
-                }
-            }
-
-            var totalAmountCell = document.getElementById('۱۶۱۰۱');
-            var taxAmountCell = document.getElementById('۱۶۱۰۲');
-            var discountedAmountCell = document.getElementById('۱۶۱۰۳');
-            var discountAmountCell = document.getElementById('۱۶۱۰۴');
-            var totalAmountBeforeDiscountCell = document.getElementById('۱۶۱۰۵');
-
-            if (totalAmountCell) {
-                totalAmountCell.innerText = numberFormat(Math.ceil(totalAmountSum));
-            } else {
-                console.error("سلول با شناسه '۱۶۱۰۱' پیدا نشد!");
-            }
-            if (taxAmountCell) {
-                taxAmountCell.innerText = numberFormat(Math.ceil(taxAmountSum));
-            } else {
-                console.error("سلول با شناسه '۱۶۱۰۲' پیدا نشد!");
-            }
-            if (discountedAmountCell) {
-                discountedAmountCell.innerText = numberFormat(Math.ceil(discountedAmountSum));
-            } else {
-                console.error("سلول با شناسه '۱۶۱۰۳' پیدا نشد!");
-            }
-            if (discountAmountCell) {
-                discountAmountCell.innerText = numberFormat(Math.ceil(discountAmountSum));
-            } else {
-                console.error("سلول با شناسه '۱۶۱۰۴' پیدا نشد!");
-            }
-            if (totalAmountBeforeDiscountCell) {
-                totalAmountBeforeDiscountCell.innerText = numberFormat(Math.ceil(totalAmountBeforeDiscountSum));
-            } else {
-                console.error("سلول با شناسه '۱۶۱۰۵' پیدا نشد!");
-            }
-        }
-
-
-        function downloadPDF() {
-            var element = document.getElementById('preview');
-            var opt = {
-                margin: 0, /* Set margin to 0 for maximum page utilization */
-                filename: 'product_list.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } /* Use mm unit to match CSS */
-            };
-            html2pdf().from(element).set(opt).save();
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            adjustRowHeight(); // تنظیم ارتفاع و عرض در هنگام بارگیری صفحه
-            increaseTextBoxHeight(); // افزایش ارتفاع تکست باکس ها در هنگام بارگیری صفحه
         });
 
+        if (resultFound) {
+            modalBody.appendChild(resultTable);
+        } else {
+            modalBody.innerHTML = '<p style="text-align:center; font-weight: bold;">محصولی با این مشخصات یافت نشد.</p>';
+        }
+        
+        modal.style.display = 'block';
 
-        document.getElementById('productTable').addEventListener('change', function (e) {
-            if (e.target && (e.target.parentElement.cellIndex === 0 || e.target.parentElement.cellIndex === 1 || e.target.parentElement.cellIndex === 2 || e.target.parentElement.cellIndex === 3 || e.target.parentElement.cellIndex === 4)) {
-                calculateTotal();
-            }
-            if (e.target && (e.target.parentElement.cellIndex === 6 || e.target.parentElement.cellIndex === 7)) {
-                calculateRowTotal(e.target.parentElement.parentElement);
-                calculateTotal();
+        // Add highlight logic to rows in the modal too
+        const modalRows = modalBody.querySelectorAll('tbody tr');
+        modalRows.forEach(row => {
+            row.addEventListener('click', function() {
+                modalRows.forEach(r => r.classList.remove('highlight'));
+                this.classList.add('highlight');
+            });
+        });
+    };
+
+    // Modal close handlers
+    closeModal.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Autocomplete logic (unchanged, just needs to be called on new searchInput)
+    function autocomplete(inp, arr) {
+        let currentFocus;
+        inp.addEventListener("input", function(e) {
+            let a, b, i, val = this.value;
+            closeAllLists();
+            if (!val) { return false; }
+            currentFocus = -1;
+            a = document.createElement("DIV");
+            a.setAttribute("id", this.id + "autocomplete-list");
+            a.setAttribute("class", "autocomplete-items");
+            this.parentNode.appendChild(a);
+
+            for (i = 0; i < arr.length; i++) {
+                if (arr[i].toLowerCase().includes(val.toLowerCase())) {
+                    b = document.createElement("DIV");
+                    const regex = new RegExp(val, 'gi');
+                    b.innerHTML = arr[i].replace(regex, (match) => `<strong>${match}</strong>`);
+                    b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                    b.addEventListener("click", function(e) {
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                }
             }
         });
-    </script>
+
+        inp.addEventListener("keydown", function(e) {
+            let x = document.getElementById(this.id + "autocomplete-list");
+            if (x) x = x.getElementsByTagName("div");
+            if (e.keyCode == 40) { // Arrow DOWN
+                currentFocus++;
+                addActive(x);
+            } else if (e.keyCode == 38) { // Arrow UP
+                currentFocus--;
+                addActive(x);
+            } else if (e.keyCode == 13) { // Enter
+                e.preventDefault();
+                if (currentFocus > -1) {
+                    if (x) x[currentFocus].click();
+                }
+            }
+        });
+
+        function addActive(x) {
+            if (!x) return false;
+            removeActive(x);
+            if (currentFocus >= x.length) currentFocus = 0;
+            if (currentFocus < 0) currentFocus = (x.length - 1);
+            x[currentFocus].classList.add("autocomplete-active");
+        }
+
+        function removeActive(x) {
+            for (let i = 0; i < x.length; i++) {
+                x[i].classList.remove("autocomplete-active");
+            }
+        }
+
+        function closeAllLists(elmnt) {
+            const x = document.getElementsByClassName("autocomplete-items");
+            for (let i = 0; i < x.length; i++) {
+                if (elmnt != x[i] && elmnt != inp) {
+                    x[i].parentNode.removeChild(x[i]);
+                }
+            }
+        }
+
+        document.addEventListener("click", function (e) {
+            closeAllLists(e.target);
+        });
+    }
+
+    // --- Sidebar Open/Close Logic ---
+    function openNav() {
+        mySidebar.classList.add('active'); // Use class for active state
+        myOverlay.classList.add('active');
+        document.body.classList.add('sidebar-open');
+        
+        // Handle width based on screen size
+        if (window.innerWidth <= 768) {
+            mySidebar.style.width = "70vw";
+            document.body.classList.add('sidebar-open-mobile');
+            document.body.classList.remove('sidebar-open'); // Remove desktop specific class
+        } else {
+            mySidebar.style.width = "250px";
+            document.body.classList.remove('sidebar-open-mobile'); // Remove mobile specific class
+            document.body.classList.add('sidebar-open'); // Add desktop specific class
+        }
+    }
+
+    function closeNav() {
+        mySidebar.classList.remove('active');
+        mySidebar.style.width = "0"; // Explicitly set width to 0
+        myOverlay.classList.remove('active');
+        document.body.classList.remove('sidebar-open');
+        document.body.classList.remove('sidebar-open-mobile');
+    }
+
+    openSidebarBtn.onclick = openNav;
+    closeSidebarBtn.onclick = closeNav;
+    myOverlay.onclick = closeNav;
+
+    // --- Sidebar Link Click Handlers ---
+    const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+    sidebarLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+            
+            // Remove active class from all links
+            sidebarLinks.forEach(item => item.classList.remove('active'));
+            // Add active class to clicked link
+            this.classList.add('active');
+
+            const productType = this.dataset.product; // Get data-product attribute
+            loadProductContent(productType);
+        });
+    });
+
+    // Handle window resize for sidebar
+    window.addEventListener('resize', () => {
+        if (mySidebar.classList.contains('active')) {
+            if (window.innerWidth <= 768) {
+                mySidebar.style.width = "70vw";
+                document.body.classList.add('sidebar-open-mobile');
+                document.body.classList.remove('sidebar-open');
+            } else {
+                mySidebar.style.width = "250px";
+                document.body.classList.remove('sidebar-open-mobile');
+                document.body.classList.add('sidebar-open');
+            }
+        }
+    });
+
+    // Initial state: Only welcome message and date/time are visible.
+    // No product content is loaded until a sidebar link is clicked.
+});
+</script>
+
 </body>
-
 </html>
