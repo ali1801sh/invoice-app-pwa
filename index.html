@@ -555,7 +555,8 @@
                     <i class="fas fa-chevron-left dropdown-icon"></i>
                 </a>
                 <ul class="dropdown-content">
-                    <li><a href="#" data-product="irancode-barcode"><i class="fas fa-code"></i> مشاهده اطلاعات</a></li>
+                    <li><a href="#" data-product="view-irancode"><i class="fas fa-code"></i> مشاهده ایرانکد</a></li>
+                    <li><a href="#" data-product="view-barcode"><i class="fas fa-barcode"></i> مشاهده بارکد</a></li>
                 </ul>
             </li>
         </ul>
@@ -743,7 +744,7 @@ document.addEventListener('DOMContentLoaded', function() {
             description: description,
             packageType: packageTypes[index] || 'نامشخص', // New column
             brand: brands[index] || 'نامشخص', // Assign brand from the new array
-            irancode: '0',
+            irancode: '0', // Keeping as '0' since no specific irancode data was provided
             barcode: barcodes[index] || '0' // Assign barcode from the new array
         };
     });
@@ -825,21 +826,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(getShamsiDate, 1000);
     // Initial call
     getShamsiDate();
-
-    // Populate irancodeBarcodeRows from realIrancodeBarcodeData
-    let irancodeBarcodeRows = '';
-    realIrancodeBarcodeData.forEach((product, index) => {
-        irancodeBarcodeRows += `
-            <tr>
-                <td>${index + 1}</td>
-                <td>${product.description}</td>
-                <td>${product.packageType}</td> 
-                <td>${product.brand}</td>
-                <td>${product.irancode}</td>
-                <td>${product.barcode}</td>
-            </tr>
-        `;
-    });
 
     // --- Product Data (simulated) ---
     const productsData = {
@@ -954,10 +940,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tbody>
             </table>
         `,
-        'irancode-barcode': `
+        'view-irancode': `
             <div class="search-container">
                 <div class="autocomplete">
-                    <input type="text" id="searchInput" placeholder="بخشی از شرح کالا یا ایرانکد/بارکد را وارد کنید...">
+                    <input type="text" id="searchInput" placeholder="بخشی از شرح کالا یا ایرانکد را وارد کنید...">
                 </div>
                 <select id="brandFilter">
                     <option value="">فیلتر با نام تجاری: همه</option>
@@ -967,7 +953,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </select>
                 <button id="searchButton">جستجو</button>
             </div>
-            <h2>جدول ایرانکد و بارکد محصولات</h2>
+            <h2>جدول ایرانکد محصولات</h2>
             <table id="productTable">
                 <thead>
                     <tr>
@@ -976,11 +962,55 @@ document.addEventListener('DOMContentLoaded', function() {
                         <th>نوع بسته بندی</th> 
                         <th>نام تجاری</th> 
                         <th>ایرانکد</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${realIrancodeBarcodeData.map((product, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${product.description}</td>
+                            <td>${product.packageType}</td> 
+                            <td>${product.brand}</td>
+                            <td>${product.irancode}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `,
+        'view-barcode': `
+            <div class="search-container">
+                <div class="autocomplete">
+                    <input type="text" id="searchInput" placeholder="بخشی از شرح کالا یا بارکد را وارد کنید...">
+                </div>
+                <select id="brandFilter">
+                    <option value="">فیلتر با نام تجاری: همه</option>
+                    <option value="گیل دخت">گیل دخت</option>
+                    <option value="خاتومه">خاتومه</option>
+                    <option value="مسیر سبز">مسیر سبز</option>
+                </select>
+                <button id="searchButton">جستجو</button>
+            </div>
+            <h2>جدول بارکد محصولات</h2>
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>شرح کالا</th>
+                        <th>نوع بسته بندی</th> 
+                        <th>نام تجاری</th> 
                         <th>بارکد</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${irancodeBarcodeRows}
+                    ${realIrancodeBarcodeData.map((product, index) => `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${product.description}</td>
+                            <td>${product.packageType}</td> 
+                            <td>${product.brand}</td>
+                            <td>${product.barcode}</td>
+                        </tr>
+                    `).join('')}
                 </tbody>
             </table>
         `
@@ -995,8 +1025,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const loadedTable = productSpecificContentDiv.querySelector('#productTable');
         if (loadedTable) {
             let cellsToConvertAndFormat = [];
-            if (productKey === 'irancode-barcode') {
-                // For irancode-barcode table, format 'ردیف' (1st column)
+            // For irancode/barcode views, only format the 'ردیف' (row number) column
+            if (productKey === 'view-irancode' || productKey === 'view-barcode') {
                 cellsToConvertAndFormat = loadedTable.querySelectorAll('td:nth-child(1)');
             } else {
                 // For other product tables, format Radeef, Vazn Gram, Gheymat Tolid, Gheymat Masraf Konandeh
@@ -1038,14 +1068,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const newMainTableBody = newProductTable.querySelector('tbody');
             if (newSearchInput && newSearchButton && newMainTableBody) {
                 let searchData = [];
-                const productRows = Array.from(newMainTableBody.getElementsByTagName('tr'));
-
-                if (productKey === 'irancode-barcode') {
-                    // Autocomplete data now comes from realIrancodeBarcodeData for consistency
+                // For irancode/barcode views, search data should include description, package type, brand, and the specific code
+                if (productKey === 'view-irancode' || productKey === 'view-barcode') {
                     searchData = realIrancodeBarcodeData.map(item => 
-                        `${item.description} ${item.packageType} ${item.brand} ${item.irancode} ${item.barcode}`
+                        `${item.description} ${item.packageType} ${item.brand} ${productKey === 'view-irancode' ? item.irancode : item.barcode}`
                     );
                 } else {
+                    const productRows = Array.from(newMainTableBody.getElementsByTagName('tr'));
                     searchData = productRows.map(row => row.getElementsByTagName('td')[1].textContent.trim());
                 }
 
@@ -1059,13 +1088,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 autocomplete(newSearchInput, searchData);
 
                 // --- Specific logic for irancode-barcode table filters ---
-                if (productKey === 'irancode-barcode') {
+                if (productKey === 'view-irancode' || productKey === 'view-barcode') {
                     const brandFilter = document.getElementById('brandFilter');
                     if (brandFilter) {
                         // Initial filter application
                         applyIrancodeBarcodeFilter(); 
                         brandFilter.addEventListener('change', applyIrancodeBarcodeFilter);
-                        newSearchInput.addEventListener('input', applyIrancodeBarcodeFilter);
+                        newSearchInput.addEventListener('input', applyIrancodeBarcodeFilter); // Also trigger filter on search input
                     }
                 }
             }
@@ -1093,23 +1122,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
         const selectedBrand = brandFilter ? brandFilter.value.trim().toLowerCase() : '';
+        const currentProductKey = document.querySelector('.sidebar ul li .dropdown-content li a.active').dataset.product; // Get active product key
 
         Array.from(tableBody.children).forEach(row => {
             const description = row.getElementsByTagName('td')[1].textContent.toLowerCase();
             const packageType = row.getElementsByTagName('td')[2].textContent.toLowerCase(); // Get package type
             const brand = row.getElementsByTagName('td')[3].textContent.toLowerCase(); // Get brand
-            const irancode = row.getElementsByTagName('td')[4].textContent.toLowerCase();
-            const barcode = row.getElementsByTagName('td')[5].textContent.toLowerCase();
+            
+            let idCode = '';
+            if (currentProductKey === 'view-irancode') {
+                idCode = row.getElementsByTagName('td')[4].textContent.toLowerCase(); // Irancode is 5th column (index 4)
+            } else if (currentProductKey === 'view-barcode') {
+                idCode = row.getElementsByTagName('td')[4].textContent.toLowerCase(); // Barcode is 5th column (index 4)
+            }
 
             const textMatch = description.includes(searchText) || 
                               packageType.includes(searchText) || // Search in package type
                               irancode.includes(searchText) || 
                               barcode.includes(searchText) ||
                               brand.includes(searchText); // Also search in brand name
+            
+            // Re-evaluate the textMatch based on current view (irancode or barcode)
+            let currentViewTextMatch = description.includes(searchText) || 
+                                       packageType.includes(searchText) || 
+                                       brand.includes(searchText);
+            if (currentProductKey === 'view-irancode') {
+                currentViewTextMatch = currentViewTextMatch || row.getElementsByTagName('td')[4].textContent.toLowerCase().includes(searchText);
+            } else if (currentProductKey === 'view-barcode') {
+                currentViewTextMatch = currentViewTextMatch || row.getElementsByTagName('td')[4].textContent.toLowerCase().includes(searchText);
+            }
+
 
             const brandMatch = (selectedBrand === '' || brand === selectedBrand);
 
-            if (textMatch && brandMatch) {
+            if (currentViewTextMatch && brandMatch) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
@@ -1123,11 +1169,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const query = inputElem.value.trim().toLowerCase();
         // If it's the irancode-barcode table, we search based on the currently displayed (filtered) rows.
         // Otherwise, we search all rows as before.
-        const rowsToSearch = productKey === 'irancode-barcode' 
-            ? Array.from(tableBodyElem.children).filter(row => row.style.display !== 'none')
-            : Array.from(tableBodyElem.children);
+        const rowsToSearch = Array.from(tableBodyElem.children).filter(row => row.style.display !== 'none');
 
-        if (!query && productKey !== 'irancode-barcode') { // For other tables, if no query, show alert
+        if (!query && !['view-irancode', 'view-barcode'].includes(productKey)) { // For other tables, if no query, show alert
             alert("لطفاً نام محصولی را برای جستجو وارد کنید.");
             return;
         }
@@ -1148,13 +1192,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         rowsToSearch.forEach(row => {
             let rowContent = '';
-            if (productKey === 'irancode-barcode') {
+            if (productKey === 'view-irancode' || productKey === 'view-barcode') {
                 const description = row.getElementsByTagName('td')[1].textContent.toLowerCase();
                 const packageType = row.getElementsByTagName('td')[2].textContent.toLowerCase(); // Get package type
                 const brand = row.getElementsByTagName('td')[3].textContent.toLowerCase(); // Get brand
-                const irancode = row.getElementsByTagName('td')[4].textContent.toLowerCase();
-                const barcode = row.getElementsByTagName('td')[5].textContent.toLowerCase();
-                rowContent = `${description} ${packageType} ${brand} ${irancode} ${barcode}`;
+                const idCode = row.getElementsByTagName('td')[4].textContent.toLowerCase(); // This column will be either irancode or barcode
+                rowContent = `${description} ${packageType} ${brand} ${idCode}`;
             } else {
                 rowContent = row.getElementsByTagName('td')[1].textContent.toLowerCase();
             }
@@ -1172,8 +1215,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const modalTable = modalBody.querySelector('table');
             if (modalTable) {
                 let cellsToConvertAndFormat = [];
-                if (productKey === 'irancode-barcode') {
-                    cellsToConvertAndFormat = modalTable.querySelectorAll('td:nth-child(1)');
+                if (productKey === 'view-irancode' || productKey === 'view-barcode') {
+                    cellsToConvertAndFormat = modalTable.querySelectorAll('td:nth-child(1)'); // Only the Radeef column
                 } else {
                     cellsToConvertAndFormat = modalTable.querySelectorAll('td:nth-child(1), td:nth-child(3), td:nth-child(5), td:nth-child(6)');
                 }
@@ -1383,3 +1426,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
