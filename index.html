@@ -100,6 +100,48 @@
             display: flex;
             align-items: center;
         }
+        
+        /* New styles for dropdown */
+        .sidebar ul li.dropdown > a {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .sidebar ul li.dropdown > a .dropdown-icon {
+            margin-right: 10px; /* Adjust as needed for RTL */
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar ul li.dropdown > a .dropdown-icon.rotated {
+            transform: rotate(90deg);
+        }
+
+        .sidebar ul li .dropdown-content {
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background-color: #2b2b3b; /* Slightly darker for dropdown background */
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        body.dark-mode .sidebar ul li .dropdown-content {
+            background-color: #0f182c;
+        }
+
+
+        .sidebar ul li .dropdown-content.active {
+            display: block;
+        }
+
+        .sidebar ul li .dropdown-content li a {
+            padding: 8px 30px; /* Indent sub-items */
+            font-size: 0.9em;
+        }
+        /* End new styles for dropdown */
 
         .sidebar ul li a:hover,
         .sidebar ul li a.active {
@@ -133,6 +175,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+            overflow: auto;
             background-color: rgba(0,0,0,0.4); 
             z-index: 999; 
             display: none; 
@@ -235,15 +278,20 @@
             text-align: center;
             margin: 20px 0;
             flex-shrink: 0; 
+            display: flex; /* Use flexbox for layout */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            justify-content: center;
+            gap: 10px; /* Space between items */
         }
         .autocomplete {
             position: relative;
             display: inline-block;
             width: 300px; 
+            min-width: 200px; /* Ensure it's not too small */
         }
-        #searchInput {
+        #searchInput, #brandFilter {
             padding: 10px;
-            width: 100%;
+            width: 100%; /* Take full width of parent */
             border-radius: 5px;
             border: 1px solid #ddd;
             font-family: inherit;
@@ -251,7 +299,7 @@
             color: #333;
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
-        body.dark-mode #searchInput {
+        body.dark-mode #searchInput, body.dark-mode #brandFilter {
             background-color: #3a3a4c; /* Darker input */
             border: 1px solid #555566;
             color: #e0e0e0;
@@ -293,12 +341,7 @@
             border-bottom: 1px solid #d4d4d4; /* Light mode default */
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
-        body.dark-mode .autocomplete-items div {
-            background-color: #3a3a4c;
-            border-bottom: 1px solid #555566;
-            color: #e0e0e0;
-        }
-        .autocomplete-items div:hover {
+        body.dark-mode .autocomplete-items div:hover {
             background-color: #e9e9e9; /* Light mode default */
         }
         body.dark-mode .autocomplete-items div:hover {
@@ -491,11 +534,30 @@
     
     <div class="sidebar" id="mySidebar">
         <a href="javascript:void(0)" class="closebtn" id="closeSidebarBtn">&times;</a> 
-        <h3>Menu</h3>
+        <h3>Management</h3>
         <ul>
-            <li><a href="#" data-product="razavi"><i class="fas fa-box-open"></i> محصولات رضوی</a></li>
-            <li><a href="#" data-product="gildokht"><i class="fas fa-seedling"></i> محصولات گیل‌دخت</a></li>
-            <li><a href="#" data-product="khatomeh"><i class="fas fa-cookie"></i> محصولات خاتومه</a></li>
+            <li class="dropdown">
+                <a>
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>قیمت محصولات</span>
+                    <i class="fas fa-chevron-left dropdown-icon"></i>
+                </a>
+                <ul class="dropdown-content">
+                    <li><a href="#" data-product="razavi"><i class="fas fa-box-open"></i> محصولات رضوی</a></li>
+                    <li><a href="#" data-product="gildokht"><i class="fas fa-seedling"></i> محصولات گیل‌دخت</a></li>
+                    <li><a href="#" data-product="khatomeh"><i class="fas fa-cookie"></i> محصولات خاتومه</a></li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a>
+                    <i class="fas fa-barcode"></i>
+                    <span>ایرانکد و بارکد</span>
+                    <i class="fas fa-chevron-left dropdown-icon"></i>
+                </a>
+                <ul class="dropdown-content">
+                    <li><a href="#" data-product="irancode-barcode"><i class="fas fa-code"></i> مشاهده اطلاعات</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
 
@@ -545,6 +607,57 @@ document.addEventListener('DOMContentLoaded', function() {
     // Dark Mode Toggle elements
     const darkModeToggle = document.getElementById('darkModeToggle');
     const darkModeIcon = document.getElementById('darkModeIcon');
+
+    // --- DATA FOR IRANCODE AND BARCODE TABLE (EDIT THIS ARRAY!) ---
+    // Make sure 'id', 'description', 'brand', 'irancode', 'barcode' are present for each item.
+    // Add or remove items as needed.
+    const realIrancodeBarcodeData = [
+        { id: 1, description: "برنج طارم هاشمی ممتاز", brand: "رضوی", irancode: "1234567890123456", barcode: "9876543210987" },
+        { id: 2, description: "روغن زیتون فرابکر یک لیتری", brand: "گیل‌دخت", irancode: "1234567890123457", barcode: "9876543210988" },
+        { id: 3, description: "رب گوجه فرنگی 800 گرمی", brand: "خاتومه", irancode: "1234567890123458", barcode: "9876543210989" },
+        { id: 4, description: "ماکارونی 700 گرمی", brand: "رضوی", irancode: "1234567890123459", barcode: "9876543210990" },
+        { id: 5, description: "چای سیاه قلم", brand: "گیل‌دخت", irancode: "1234567890123460", barcode: "9876543210991" },
+        { id: 6, description: "قند کله شکسته 1 کیلوگرمی", brand: "رضوی", irancode: "1234567890123461", barcode: "9876543210992" },
+        { id: 7, description: "نمک تصفیه شده 750 گرمی", brand: "خاتومه", irancode: "1234567890123462", barcode: "9876543210993" },
+        { id: 8, description: "بیسکویت پذیرایی", brand: "رضوی", irancode: "۰۸۸۹۸۹۱۱۳۴", barcode: "9876543210994" },
+        { id: 9, description: "شیر پرچرب پاستوریزه 1 لیتری", brand: "گیل‌دخت", irancode: "1234567890123464", barcode: "9876543210995" },
+        { id: 10, description: "آبلیمو طبیعی 500 سی سی", brand: "خاتومه", irancode: "1234567890123465", barcode: "9876543210996" },
+        { id: 11, description: "عسل طبیعی 500 گرم", brand: "رضوی", irancode: "1234567890123466", barcode: "9876543210997" },
+        { id: 12, description: "ماست کم چرب", brand: "گیل‌دخت", irancode: "1234567890123467", barcode: "9876543210998" },
+        { id: 13, description: "رب انار سنتی", brand: "خاتومه", irancode: "1234567890123468", barcode: "9876543210999" },
+        { id: 14, description: "پودر زردچوبه", brand: "رضوی", irancode: "1234567890123469", barcode: "9876543211000" },
+        { id: 15, description: "فلفل سیاه پودر شده", brand: "گیل‌دخت", irancode: "1234567890123470", barcode: "9876543211001" },
+        // ... شما می توانید تا 400 یا بیشتر ردیف واقعی را اینجا اضافه کنید ...
+        { id: 398, description: "باقالی پخته", brand: "گیل‌دخت", irancode: "20240730135131398", barcode: "7890123456398" },
+        { id: 399, description: "کنسرو ذرت", brand: "خاتومه", irancode: "20240730135131399", barcode: "7890123456399" },
+        { id: 400, description: "آب میوه پاکتی", brand: "رضوی", irancode: "20240730135131400", barcode: "7890123456400" },
+          { id: 600, description: "آب میوه پاکتی", brand: "رضوی", irancode: "20240730135131400", barcode: "7890123456400" },
+            { id: 601, description: "آب میوه پاکتی", brand: "رضوی", irancode: "20240730135131400", barcode: "7890123456400" }
+    ];
+    // --- END OF DATA FOR IRANCODE AND BARCODE TABLE ---
+
+
+    // Function to convert Persian numerals to English numerals
+    function convertPersianToEnglishNumbers(str) {
+        if (typeof str !== 'string') return str;
+        const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+        const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+        return str.replace(/[۰-۹]/g, function(d) {
+            return englishNumbers[persianNumbers.indexOf(d)];
+        });
+    }
+
+    // Function to format a number with commas
+    function formatNumberWithCommas(numberString) {
+        // Remove existing commas, convert Persian to English numbers first
+        let cleanedString = convertPersianToEnglishNumbers(String(numberString)).replace(/,/g, '');
+        // Check if it's a valid number
+        if (isNaN(cleanedString) || cleanedString === '' || cleanedString === '-' || cleanedString === '---') {
+            return numberString; // Return original if not a number or special character
+        }
+        // Convert to number and then format
+        return Number(cleanedString).toLocaleString('en-US');
+    }
 
     // --- Dark Mode Logic ---
     function enableDarkMode() {
@@ -600,6 +713,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial call
     getShamsiDate();
 
+    // Populate irancodeBarcodeRows from realIrancodeBarcodeData
+    let irancodeBarcodeRows = '';
+    realIrancodeBarcodeData.forEach(product => {
+        irancodeBarcodeRows += `
+            <tr>
+                <td>${product.id}</td>
+                <td>${product.description}</td>
+                <td>${product.brand}</td>
+                <td>${product.irancode}</td>
+                <td>${product.barcode}</td>
+            </tr>
+        `;
+    });
+
     // --- Product Data (simulated) ---
     const productsData = {
         razavi: `
@@ -623,15 +750,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>۱</td><td>پودر فلفل سیاه</td><td>۱۰۰</td><td>پت</td><td>۱,۵۲۱,۵۲۰</td><td>۱,۹۰۱,۵۶۴</td><td>۶۸۷۷/ظ/۵۰</td></tr>
-                    <tr><td>۲</td><td>پودر فلفل قرمز</td><td>۱۰۰</td><td>پت</td><td>۷۵۵,۶۵۱</td><td>۹۴۴,۵۶۴</td><td>۶۸۴۹/ظ/۵۰</td></tr>
-                    <tr><td>۳</td><td>پودر آویشن</td><td>۵۰</td><td>پت</td><td>۱,۰۳۵,۶۵۱</td><td>۱,۲۹۴,۵۶۴</td><td>۶۹۰۹/ظ/۵۰</td></tr>
-                    <tr><td>۴</td><td>پودر سماق</td><td>۱۰۰</td><td>پت</td><td>۱,۰۲۷,۶۵۱</td><td>۱,۲۸۴,۵۶۴</td><td>۶۸۴۷/ظ/۵۰</td></tr>
-                    <tr><td>۵</td><td>پودر دارچین</td><td>۱۰۰</td><td>پت</td><td>۷۲۳,۶۵۱</td><td>۹۰۴,۵۶۴</td><td>۶۸۵۴/ظ/۵۰</td></tr>
-                    <tr><td>۶</td><td>پودر زردچوبه</td><td>۱۰۰</td><td>پت</td><td>۶۴۳,۶۵۱</td><td>۸۰۴,۵۶۴</td><td>۶۹۴۱/ظ/۵۰</td></tr>
-                    <tr><td>۷</td><td>پودر کاری</td><td>۱۰۰</td><td>پت</td><td>۷۹۵,۶۵۱</td><td>۹۹۴,۵۶۴</td><td>۶۸۵۶/ظ/۵۰</td></tr>
-                    <tr><td>۸</td><td>پودر زنجبیل</td><td>۱۰۰</td><td>پت</td><td>۹۴۷,۶۵۱</td><td>۱,۱۸۴,۵۶۴</td><td>۶۸۷۶/ظ/۵۰</td></tr>
-                    <tr><td>۹</td><td>پودر سیر</td><td>۱۰۰</td><td>پت</td><td>۸۹۹,۶۵۱</td><td>۱,۱۲۴,۵۶۴</td><td>۶۸۴۶/ظ/۵۰</td></tr>
+                    <tr><td>1</td><td>پودر فلفل سیاه</td><td>100</td><td>پت</td><td>1521520</td><td>1901564</td><td>6877/ظ/50</td></tr>
+                    <tr><td>2</td><td>پودر فلفل قرمز</td><td>100</td><td>پت</td><td>755651</td><td>944564</td><td>6849/ظ/50</td></tr>
+                    <tr><td>3</td><td>پودر آویشن</td><td>50</td><td>پت</td><td>1035651</td><td>1294564</td><td>6909/ظ/50</td></tr>
+                    <tr><td>4</td><td>پودر سماق</td><td>100</td><td>پت</td><td>1027651</td><td>1284564</td><td>6847/ظ/50</td></tr>
+                    <tr><td>5</td><td>پودر دارچین</td><td>100</td><td>پت</td><td>723651</td><td>904564</td><td>6854/ظ/50</td></tr>
+                    <tr><td>6</td><td>پودر زردچوبه</td><td>100</td><td>پت</td><td>643651</td><td>804564</td><td>6941/ظ/50</td></tr>
+                    <tr><td>7</td><td>پودر کاری</td><td>100</td><td>پت</td><td>795651</td><td>994564</td><td>6856/ظ/50</td></tr>
+                    <tr><td>8</td><td>پودر زنجبیل</td><td>100</td><td>پت</td><td>947651</td><td>1184564</td><td>6876/ظ/50</td></tr>
+                    <tr><td>9</td><td>پودر سیر</td><td>100</td><td>پت</td><td>899651</td><td>1124564</td><td>6846/ظ/50</td></tr>
                 </tbody>
             </table>
         `,
@@ -656,16 +783,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>۱</td><td>پودر فلفل سیاه</td><td>پت</td><td>۹۰ گرم</td><td>۱,۴۸۸,۷۲۰</td><td>۱,۸۶۰,۹۰۰</td><td>۵۰/۲۴۱۷۳</td></tr>
-                    <tr><td>۲</td><td>پودر فلفل قرمز</td><td>پت</td><td>۹۰ گرم</td><td>۷۲۹,۵۲۰</td><td>۹۱۱,۹۰۰</td><td>۵۰/۲۴۲۷۲</td></tr>
-                    <tr><td>۳</td><td>آویشن</td><td>پت</td><td>۵۰ گرم</td><td>۶۵۹,۱۲۰</td><td>۸۲۳,۹۰۰</td><td>۵۰/24103</td></tr>
-                    <tr><td>۴</td><td>پودر سماق</td><td>پت</td><td>۹0 گرم</td><td>۷۷۳,۵۲۰</td><td>۹۶۶,۹۰۰</td><td>۵۰/۲۴۱۰۴</td></tr>
-                    <tr><td>۵</td><td>پودر دارچین</td><td>پت</td><td>۹۰ گرم</td><td>۷۶۴،۷۲۰</td><td>۹۵۵,۹۰۰</td><td>۵۰/۲۴۱۰۸</td></tr>
-                    <tr><td>۶</td><td>زرد چوبه</td><td>پت</td><td>۹۰ گرم</td><td>۶۲۳,۹۲۰</td><td>۷۹۹,۹۰۰</td><td>۵۰/۲۴۱۰۶</td></tr>
-                    <tr><td>۷</td><td>پودر کاری</td><td>پت</td><td>۹۰ گرم</td><td>۸۱۷,۵۲۰</td><td>۱,۰۲۱,۹۰۰</td><td>۵۰/۲۴۲۷۳</td></tr>
-                    <tr><td>۸</td><td>زنجبیل</td><td>پت</td><td>۹۰ گرم</td><td>۹۴۰،۷۲۰</td><td>۱,۱۷۵,۹۰۰</td><td>۵۰/۲۴۱۰۹</td></tr>
-                    <tr><td>۹</td><td>پودر سیر</td><td>پت</td><td>۱۰۰ گرم</td><td>۹۹۳,۵۲۰</td><td>۱,۲۴۱,۹۰۰</td><td>۵۰/۲۴۱۱۰</td></tr>
-                    <tr><td>۱۰</td><td>شکر</td><td>۹۰۰ گرم</td><td>۹۰۰ گرم</td><td>۸۰۱,۰۰۰</td><td>۸۹۰,۰۰۰</td><td>۵۰/۳۰۵۲۰</td></tr>
+                    <tr><td>1</td><td>پودر فلفل سیاه</td><td>پت</td><td>90 گرم</td><td>1488720</td><td>1860900</td><td>50/24173</td></tr>
+                    <tr><td>2</td><td>پودر فلفل قرمز</td><td>پت</td><td>90 گرم</td><td>729520</td><td>911900</td><td>50/24272</td></tr>
+                    <tr><td>3</td><td>آویشن</td><td>پت</td><td>50 گرم</td><td>1035920</td><td>1294900</td><td>50/24103</td></tr>
+                    <tr><td>4</td><td>پودر سماق</td><td>پت</td><td>90 گرم</td><td>970320</td><td>1212900</td><td>50/24104</td></tr>
+                    <tr><td>5</td><td>پودر دارچین</td><td>پت</td><td>90 گرم</td><td>764720</td><td>955900</td><td>50/24108</td></tr>
+                    <tr><td>6</td><td>زرد چوبه</td><td>پت</td><td>90 گرم</td><td>623920</td><td>799900</td><td>50/24106</td></tr>
+                    <tr><td>7</td><td>پودر کاری</td><td>پت</td><td>90 گرم</td><td>817520</td><td>1021900</td><td>50/24273</td></tr>
+                    <tr><td>8</td><td>زنجبیل</td><td>پت</td><td>90 گرم</td><td>940720</td><td>1175900</td><td>50/24109</td></tr>
+                    <tr><td>9</td><td>پودر سیر</td><td>پت</td><td>100 گرم</td><td>993520</td><td>1241900</td><td>50/24110</td></tr>
+                    <tr><td>10</td><td>شکر</td><td>900 گرم</td><td>900 گرم</td><td>801000</td><td>890000</td><td>50/30520</td></tr>
                 </tbody>
             </table>
         `,
@@ -690,26 +817,55 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>۱</td><td>پودر زردچوبه</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۲</td><td>پودر سیر</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۳</td><td>پودر فلفل قرمز</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۴</td><td>پودر سماق</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۵</td><td>پودر دارچین</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۶</td><td>پودر ادویه کاری</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۷</td><td>پودر آویشن</td><td>۶۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۸</td><td>پودر زنجبیل</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۹</td><td>پودر فلفل سیاه</td><td>۱۰۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۰</td><td>پودر سیر</td><td>۱۲۰</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۱</td><td>پودر سیر</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۲</td><td>پودر دارچین</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۳</td><td>پودر فلفل قرمز</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۴</td><td>پودر ادویه کاری</td><td>۷۵</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۵</td><td>پودر سیر</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۶</td><td>پودر سماق</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۷</td><td>پودر دارچین</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۸</td><td>پودر فلفل قرمز</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۱۹</td><td>پودر ادویه کاری</td><td>۵۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
-                    <tr><td>۲۰</td><td>پودر آویشن</td><td>۳۰</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>1</td><td>پودر زردچوبه</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>2</td><td>پودر سیر</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>3</td><td>پودر فلفل قرمز</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>4</td><td>پودر سماق</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>5</td><td>پودر دارچین</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>6</td><td>پودر ادویه کاری</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>7</td><td>پودر آویشن</td><td>60</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>8</td><td>پودر زنجبیل</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>9</td><td>پودر فلفل سیاه</td><td>100</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>10</td><td>پودر سیر</td><td>120</td><td>قوطی</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>11</td><td>پودر سیر</td><td>75</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>12</td><td>پودر دارچین</td><td>75</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>13</td><td>پودر فلفل قرمز</td><td>75</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>14</td><td>پودر ادویه کاری</td><td>75</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>15</td><td>پودر سیر</td><td>50</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>16</td><td>پودر سماق</td><td>50</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>17</td><td>پودر دارچین</td><td>50</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>18</td><td>پودر فلفل قرمز</td><td>50</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>19</td><td>پودر ادویه کاری</td><td>50</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                    <tr><td>20</td><td>پودر آویشن</td><td>30</td><td>سلفون</td><td>-</td><td>-</td><td>---</td></tr>
+                </tbody>
+            </table>
+        `,
+        'irancode-barcode': `
+            <div class="search-container">
+                <div class="autocomplete">
+                    <input type="text" id="searchInput" placeholder="بخشی از شرح کالا یا ایرانکد/بارکد را وارد کنید...">
+                </div>
+                <select id="brandFilter">
+                    <option value="">فیلتر با نام تجاری: همه</option>
+                    <option value="رضوی">رضوی</option>
+                    <option value="گیل‌دخت">گیل‌دخت</option>
+                    <option value="خاتومه">خاتومه</option>
+                </select>
+                <button id="searchButton">جستجو</button>
+            </div>
+            <h2>جدول ایرانکد و بارکد محصولات</h2>
+            <table id="productTable">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>شرح کالا</th>
+                        <th>نام تجاری</th> 
+                        <th>ایرانکد</th>
+                        <th>بارکد</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${irancodeBarcodeRows}
                 </tbody>
             </table>
         `
@@ -720,6 +876,43 @@ document.addEventListener('DOMContentLoaded', function() {
         productSpecificContentDiv.innerHTML = productsData[productKey]; // Load content
         productSpecificContentDiv.style.display = 'block'; // Show product content
 
+        // Convert numbers to English and format with commas in the loaded table
+        const loadedTable = productSpecificContentDiv.querySelector('#productTable');
+        if (loadedTable) {
+            let cellsToConvertAndFormat = [];
+            if (productKey === 'irancode-barcode') {
+                // For irancode-barcode table, format 'ردیف' (1st column)
+                cellsToConvertAndFormat = loadedTable.querySelectorAll('td:nth-child(1)');
+            } else {
+                // For other product tables, format Radeef, Vazn Gram, Gheymat Tolid, Gheymat Masraf Konandeh
+                cellsToConvertAndFormat = loadedTable.querySelectorAll('td:nth-child(1), td:nth-child(3), td:nth-child(5), td:nth-child(6)'); 
+            }
+            
+            cellsToConvertAndFormat.forEach(cell => {
+                let originalText = cell.textContent.trim();
+                let convertedAndFormattedText = originalText;
+
+                if (originalText.includes('گرم') || originalText.includes('کیلوگرم')) {
+                    // Handle cases like "90 گرم" or "900 گرم" where we only want to format the number part
+                    const parts = originalText.split(' ');
+                    if (parts.length > 1) {
+                        const numberPart = formatNumberWithCommas(parts[0]);
+                        convertedAndFormattedText = numberPart + ' ' + parts[1];
+                    } else {
+                        convertedAndFormattedText = formatNumberWithCommas(originalText);
+                    }
+                } else if (originalText === '-' || originalText === '---') {
+                    // Do nothing for hyphens or "---"
+                    convertedAndFormattedText = originalText;
+                } else {
+                    // For pure numbers (like Radeef, Gheymat Tolid, Gheymat Masraf Konandeh, Irancode/Barcode Radeef)
+                    convertedAndFormattedText = formatNumberWithCommas(originalText);
+                }
+                cell.textContent = convertedAndFormattedText;
+            });
+        }
+
+
         // Re-initialize search and autocomplete for the newly loaded content
         const newSearchInput = document.getElementById('searchInput');
         const newSearchButton = document.getElementById('searchButton');
@@ -729,17 +922,37 @@ document.addEventListener('DOMContentLoaded', function() {
         if (newProductTable) {
             const newMainTableBody = newProductTable.querySelector('tbody');
             if (newSearchInput && newSearchButton && newMainTableBody) {
+                let searchData = [];
                 const productRows = Array.from(newMainTableBody.getElementsByTagName('tr'));
-                const productNames = productRows.map(row => row.getElementsByTagName('td')[1].textContent.trim());
+
+                if (productKey === 'irancode-barcode') {
+                    // Autocomplete data now comes from realIrancodeBarcodeData for consistency
+                    searchData = realIrancodeBarcodeData.map(item => 
+                        `${item.description} ${item.brand} ${item.irancode} ${item.barcode}`
+                    );
+                } else {
+                    searchData = productRows.map(row => row.getElementsByTagName('td')[1].textContent.trim());
+                }
 
                 // Attach event listeners to the new elements
-                newSearchButton.onclick = () => performSearch(newSearchInput, newMainTableBody);
+                newSearchButton.onclick = () => performSearch(newSearchInput, newMainTableBody, productKey);
                 newSearchInput.addEventListener('keyup', (event) => {
                     if (event.key === 'Enter') {
-                        performSearch(newSearchInput, newMainTableBody);
+                        performSearch(newSearchInput, newMainTableBody, productKey);
                     }
                 });
-                autocomplete(newSearchInput, productNames);
+                autocomplete(newSearchInput, searchData);
+
+                // --- Specific logic for irancode-barcode table filters ---
+                if (productKey === 'irancode-barcode') {
+                    const brandFilter = document.getElementById('brandFilter');
+                    if (brandFilter) {
+                        // Initial filter application
+                        applyIrancodeBarcodeFilter(); 
+                        brandFilter.addEventListener('change', applyIrancodeBarcodeFilter);
+                        newSearchInput.addEventListener('input', applyIrancodeBarcodeFilter);
+                    }
+                }
             }
 
             // Add click event listener to table rows for highlighting
@@ -756,10 +969,48 @@ document.addEventListener('DOMContentLoaded', function() {
         closeNav(); // Close sidebar after selection
     }
 
+    // New function to apply filters for irancode-barcode table
+    function applyIrancodeBarcodeFilter() {
+        const searchInput = document.getElementById('searchInput');
+        const brandFilter = document.getElementById('brandFilter');
+        const tableBody = document.querySelector('#productSpecificContent #productTable tbody');
+        if (!tableBody) return;
+
+        const searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        const selectedBrand = brandFilter ? brandFilter.value.trim().toLowerCase() : '';
+
+        Array.from(tableBody.children).forEach(row => {
+            const description = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+            const brand = row.getElementsByTagName('td')[2].textContent.toLowerCase();
+            const irancode = row.getElementsByTagName('td')[3].textContent.toLowerCase();
+            const barcode = row.getElementsByTagName('td')[4].textContent.toLowerCase();
+
+            const textMatch = description.includes(searchText) || 
+                              irancode.includes(searchText) || 
+                              barcode.includes(searchText) ||
+                              brand.includes(searchText); // Also search in brand name
+
+            const brandMatch = (selectedBrand === '' || brand === selectedBrand);
+
+            if (textMatch && brandMatch) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+
     // Function to perform search (now takes input and tbody elements)
-    const performSearch = (inputElem, tableBodyElem) => {
+    const performSearch = (inputElem, tableBodyElem, productKey) => {
         const query = inputElem.value.trim().toLowerCase();
-        if (!query) {
+        // If it's the irancode-barcode table, we search based on the currently displayed (filtered) rows.
+        // Otherwise, we search all rows as before.
+        const rowsToSearch = productKey === 'irancode-barcode' 
+            ? Array.from(tableBodyElem.children).filter(row => row.style.display !== 'none')
+            : Array.from(tableBodyElem.children);
+
+        if (!query && productKey !== 'irancode-barcode') { // For other tables, if no query, show alert
             alert("لطفاً نام محصولی را برای جستجو وارد کنید.");
             return;
         }
@@ -777,11 +1028,20 @@ document.addEventListener('DOMContentLoaded', function() {
         resultTable.appendChild(resultTbody);
         
         // Use the rows from the provided tableBodyElem
-        const productRows = Array.from(tableBodyElem.getElementsByTagName('tr'));
+        
+        rowsToSearch.forEach(row => {
+            let rowContent = '';
+            if (productKey === 'irancode-barcode') {
+                const description = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+                const brand = row.getElementsByTagName('td')[2].textContent.toLowerCase(); // Get brand
+                const irancode = row.getElementsByTagName('td')[3].textContent.toLowerCase();
+                const barcode = row.getElementsByTagName('td')[4].textContent.toLowerCase();
+                rowContent = `${description} ${brand} ${irancode} ${barcode}`;
+            } else {
+                rowContent = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+            }
 
-        productRows.forEach(row => {
-            const productName = row.getElementsByTagName('td')[1].textContent.toLowerCase();
-            if (productName.includes(query)) {
+            if (query === "" || rowContent.includes(query)) { // If query is empty, all currently visible rows are results
                 const clonedRow = row.cloneNode(true);
                 resultTbody.appendChild(clonedRow);
                 resultFound = true;
@@ -790,6 +1050,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (resultFound) {
             modalBody.appendChild(resultTable);
+             // Convert numbers to English and format with commas in the modal table
+            const modalTable = modalBody.querySelector('table');
+            if (modalTable) {
+                let cellsToConvertAndFormat = [];
+                if (productKey === 'irancode-barcode') {
+                    cellsToConvertAndFormat = modalTable.querySelectorAll('td:nth-child(1)');
+                } else {
+                    cellsToConvertAndFormat = modalTable.querySelectorAll('td:nth-child(1), td:nth-child(3), td:nth-child(5), td:nth-child(6)');
+                }
+
+                cellsToConvertAndFormat.forEach(cell => {
+                    let originalText = cell.textContent.trim();
+                    let convertedAndFormattedText = originalText;
+
+                    if (originalText.includes('گرم') || originalText.includes('کیلوگرم')) {
+                        const parts = originalText.split(' ');
+                        if (parts.length > 1) {
+                            const numberPart = formatNumberWithCommas(parts[0]);
+                            convertedAndFormattedText = numberPart + ' ' + parts[1];
+                        } else {
+                            convertedAndFormattedText = formatNumberWithCommas(originalText);
+                        }
+                    } else if (originalText === '-' || originalText === '---') {
+                        convertedAndFormattedText = originalText;
+                    } else {
+                        convertedAndFormattedText = formatNumberWithCommas(originalText);
+                    }
+                    cell.textContent = convertedAndFormattedText;
+                });
+            }
         } else {
             modalBody.innerHTML = '<p style="text-align:center; font-weight: bold;">محصولی با این مشخصات یافت نشد.</p>';
         }
@@ -920,14 +1210,31 @@ document.addEventListener('DOMContentLoaded', function() {
     closeSidebarBtn.onclick = closeNav;
     myOverlay.onclick = closeNav;
 
-    // --- Sidebar Link Click Handlers ---
-    const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
-    sidebarLinks.forEach(link => {
+    // --- Sidebar Dropdown Logic ---
+    const dropdownToggles = document.querySelectorAll('.sidebar ul li.dropdown > a');
+
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior if it's a link
+            const dropdownContent = this.nextElementSibling; // The ul.dropdown-content
+            const dropdownIcon = this.querySelector('.dropdown-icon');
+
+            // Toggle active class on dropdown content
+            dropdownContent.classList.toggle('active');
+            // Rotate the icon
+            dropdownIcon.classList.toggle('rotated');
+        });
+    });
+
+
+    // --- Sidebar Sub-link Click Handlers (for actual product/irancode links) ---
+    const sidebarSubLinks = document.querySelectorAll('.sidebar ul li .dropdown-content li a');
+    sidebarSubLinks.forEach(link => {
         link.addEventListener('click', function(event) {
             event.preventDefault(); // Prevent default link behavior
             
-            // Remove active class from all links
-            sidebarLinks.forEach(item => item.classList.remove('active'));
+            // Remove active class from all sub-links AND main dropdown links
+            document.querySelectorAll('.sidebar ul li a').forEach(item => item.classList.remove('active'));
             // Add active class to clicked link
             this.classList.add('active');
 
