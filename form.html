@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فرم و گزارش پرسنل</title>
     <style>
-        /* استایل‌های اصلی */
+        /* استایل‌های CSS */
         body {
             direction: rtl;
             font-family: 'Arial', sans-serif;
@@ -18,55 +18,30 @@
             margin: 0;
             padding: 20px;
         }
-
-        /* استایل‌های فرم */
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 1200px;
+            gap: 20px;
+        }
         .form-container {
             background: #fff;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
-            box-sizing: border-box;
-            position: relative; /* برای قرار دادن دکمه در گوشه */
+            flex: 1;
+            min-width: 300px;
         }
-
-        /* استایل‌های سایدبار */
         .sidebar-container {
-            position: fixed; /* موقعیت ثابت */
-            top: 0;
-            left: -350px; /* مخفی کردن سایدبار */
-            width: 320px;
-            height: 100%;
-            background-color: #fdfdfd;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-            transition: left 0.3s ease; /* انیمیشن باز و بسته شدن */
-            z-index: 1000;
+            background: #fdfdfd;
             padding: 20px;
-            box-sizing: border-box;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
             overflow-y: auto;
+            max-height: 80vh;
         }
-        .sidebar-container.active {
-            left: 0; /* نمایش سایدبار */
-        }
-        
-        /* استایل‌های دکمه باز و بسته کردن سایدبار */
-        .toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px; /* موقعیت دکمه */
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* استایل‌های آیتم‌های گزارش */
         .sidebar-item {
             border-bottom: 1px solid #eee;
             padding: 10px 0;
@@ -78,8 +53,6 @@
             margin: 5px 0;
             line-height: 1.5;
         }
-
-        /* ادامه استایل‌های فرم قبلی */
         h1 { text-align: center; color: #555; margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; }
         input[type="text"] { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
@@ -88,45 +61,37 @@
     </style>
 </head>
 <body>
+    <div class="main-container">
+        <div class="form-container">
+            <h1>فرم ورود اطلاعات</h1>
+            <form id="contact-form">
+                <label for="national-code">کد ملی:</label>
+                <input type="text" id="national-code" name="entry.1635973673" required>
+                
+                <label for="first-name">نام:</label>
+                <input type="text" id="first-name" name="entry.1097735468" required>
+                
+                <label for="last-name">نام خانوادگی:</label>
+                <input type="text" id="last-name" name="entry.661927843" required>
+                
+                <button type="submit">ارسال</button>
+            </form>
+        </div>
 
-    <button class="toggle-btn" id="toggle-sidebar">گزارش</button>
-
-    <div class="sidebar-container" id="sidebar">
-        <h1>گزارش پرسنل</h1>
-        <div id="personnel-list">در حال بارگذاری اطلاعات...</div>
-    </div>
-    
-    <div class="form-container">
-        <h1>فرم ورود اطلاعات</h1>
-        <form id="contact-form">
-            <label for="national-code">کد ملی:</label>
-            <input type="text" id="national-code" name="entry.1635973673" required>
-            
-            <label for="first-name">نام:</label>
-            <input type="text" id="first-name" name="entry.1097735468" required>
-            
-            <label for="last-name">نام خانوادگی:</label>
-            <input type="text" id="last-name" name="entry.661927843" required>
-            
-            <button type="submit">ارسال</button>
-        </form>
+        <div class="sidebar-container">
+            <h1>گزارش پرسنل</h1>
+            <div id="personnel-list">در حال بارگذاری اطلاعات...</div>
+        </div>
     </div>
 
     <script>
         // آدرس نهایی فرم شما
         const formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScg6KHdjRctGfV8TFT5baK9glJpzTZpH-nHUDU7E8qNm5ByCA/formResponse';
         
-        // آدرس وب اپلیکیشن شما
+        // آدرس وب اپلیکیشن شما - این آدرس با اطلاعاتی که شما ارائه دادید به‌روزرسانی شده است.
         const scriptURL = 'https://script.google.com/macros/s/AKfycbwWnowuwGpXh4ZS91_tP7B9S73c0yWzZOvLcDTFnSG0ruSoZr7pE5Hpm5kCoiU7JKXaIQ/exec';
-        
-        // مدیریت سایدبار
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('toggle-sidebar');
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
 
-        // جاوا اسکریپت برای ارسال و دریافت اطلاعات
+        // جاوا اسکریپت برای ارسال اطلاعات به Google Forms
         const form = document.getElementById('contact-form');
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -139,7 +104,7 @@
             .then(() => {
                 alert('اطلاعات شما با موفقیت ارسال شد!');
                 form.reset();
-                fetchPersonnelData();
+                fetchPersonnelData(); // بعد از ارسال، اطلاعات را به‌روزرسانی می‌کند
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -147,6 +112,7 @@
             });
         });
         
+        // جاوا اسکریپت برای دریافت و نمایش اطلاعات از گوگل شیت
         function fetchPersonnelData() {
             fetch(scriptURL)
                 .then(response => {
@@ -162,6 +128,8 @@
                     data.forEach(item => {
                         const div = document.createElement('div');
                         div.className = 'sidebar-item';
+                        // توجه: عنوان ستون‌ها در گوگل شیت شما باید دقیقاً به همین شکل باشد
+                        // (مثلاً: "نام", "نام خانوادگی", "کد ملی")
                         div.innerHTML = `
                             <p><strong>نام:</strong> ${item.نام}</p>
                             <p><strong>نام خانوادگی:</strong> ${item['نام خانوادگی']}</p>
@@ -176,6 +144,7 @@
                 });
         }
         
+        // با بارگذاری صفحه، اطلاعات را دریافت می‌کند
         fetchPersonnelData();
     </script>
 </body>
