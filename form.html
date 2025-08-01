@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>فرم و گزارش پرسنل</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* استایل‌های اصلی */
         body {
@@ -17,6 +18,44 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* استایل‌های حالت تاریک */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+        body.dark-mode .form-container,
+        body.dark-mode .modal-content {
+            background: #1e1e1e;
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode input[type="text"] {
+            background-color: #333;
+            color: #e0e0e0;
+            border-color: #555;
+        }
+        body.dark-mode .modal-header,
+        body.dark-mode th {
+            background-color: #2a2a2a;
+        }
+        body.dark-mode tr:nth-child(even) {
+            background-color: #242424;
+        }
+        body.dark-mode .modal-close {
+            color: #e0e0e0;
+        }
+        body.dark-mode .toggle-mode-btn {
+            background-color: #333;
+            color: #e0e0e0;
+            border-color: #555;
+        }
+        body.dark-mode h1 {
+             color: #e0e0e0;
+        }
+        body.dark-mode tr:hover {
+            background-color: #3a473a !important; /* رنگ سبز کم‌رنگ در حالت تاریک */
         }
 
         /* استایل‌های فرم */
@@ -29,8 +68,41 @@
             max-width: 450px;
             box-sizing: border-box;
             position: relative;
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
 
+        h1 { text-align: center; color: #555; margin-bottom: 20px; transition: color 0.3s; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+        button[type="submit"] { width: 100%; background-color: #5cb85c; color: white; padding: 12px; border: none; border-radius: 4px; cursor: pointer; }
+        button[type="submit"]:hover { background-color: #4cae4c; }
+
+        /* استایل‌های دکمه‌های کنترلی */
+        .control-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            display: flex;
+            gap: 10px;
+        }
+        .toggle-btn, .toggle-mode-btn {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .toggle-mode-btn {
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        
         /* استایل‌های سایدبار */
         .sidebar-container {
             position: fixed;
@@ -49,51 +121,138 @@
         .sidebar-container.active {
             left: 0;
         }
-        
-        /* استایل‌های دکمه باز و بسته کردن سایدبار */
-        .toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #5cb85c;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 16px;
+        .sidebar-item-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
             border-radius: 4px;
             cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: right;
+        }
+        .sidebar-item-btn:hover {
+            background-color: #e9e9e9;
         }
 
-        /* استایل‌های آیتم‌های گزارش */
-        .sidebar-item {
-            border-bottom: 1px solid #eee;
-            padding: 10px 0;
+        /* استایل‌های پاپ‌آپ (Modal) */
+        .modal {
+            display: none; 
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
         }
-        .sidebar-item:last-child {
-            border-bottom: none;
+        .modal.open {
+            display: flex;
         }
-        .sidebar-item p {
-            margin: 5px 0;
-            line-height: 1.5;
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 800px;
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+            position: relative;
+        }
+        .modal-close {
+            color: #aaa;
+            float: left;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        .modal-header {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        /* استایل‌های جدول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        td {
+            font-weight: bold; /* تغییر اصلی: بولد کردن متن سلول */
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #e6f7e6; /* تغییر اصلی: رنگ سبز کم‌رنگ هنگام هاور */
         }
 
-        /* ادامه استایل‌های فرم قبلی */
-        h1 { text-align: center; color: #555; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; }
-        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        button[type="submit"] { width: 100%; background-color: #5cb85c; color: white; padding: 12px; border: none; border-radius: 4px; cursor: pointer; }
-        button[type="submit"]:hover { background-color: #4cae4c; }
+        @keyframes animatetop {
+            from { top: -300px; opacity: 0 }
+            to { top: 0; opacity: 1 }
+        }
     </style>
 </head>
 <body>
 
-    <button class="toggle-btn" id="toggle-sidebar">گزارش</button>
+    <div class="control-buttons">
+        <button class="toggle-mode-btn" id="toggle-mode"><i class="fas fa-moon"></i></button>
+        <button class="toggle-btn" id="toggle-sidebar">Management</button>
+    </div>
 
     <div class="sidebar-container" id="sidebar">
-        <h1>گزارش پرسنل</h1>
-        <div id="personnel-list">در حال بارگذاری اطلاعات...</div>
+        <h1>Management</h1>
+        <button class="sidebar-item-btn" id="open-report-btn">گزارش پرسنل</button>
+    </div>
+
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-close">&times;</span>
+                <h2>گزارش پرسنل</h2>
+            </div>
+            <div class="modal-body">
+                <table id="personnel-table">
+                    <thead>
+                        <tr>
+                            <th>نام</th>
+                            <th>نام خانوادگی</th>
+                            <th>کد ملی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+                <p id="loading-message">در حال بارگذاری اطلاعات...</p>
+            </div>
+        </div>
     </div>
     
     <div class="form-container">
@@ -124,10 +283,44 @@
         const toggleBtn = document.getElementById('toggle-sidebar');
         toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('active');
-            if (sidebar.classList.contains('active')) {
-                fetchPersonnelData(); // با باز شدن سایدبار، اطلاعات را به‌روزرسانی می‌کند
+        });
+
+        // مدیریت حالت تاریک و روشن
+        const toggleModeBtn = document.getElementById('toggle-mode');
+        const body = document.body;
+        toggleModeBtn.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            const icon = toggleModeBtn.querySelector('i');
+            if (body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
             }
         });
+
+        // مدیریت پاپ‌آپ گزارش
+        const reportModal = document.getElementById('report-modal');
+        const openReportBtn = document.getElementById('open-report-btn');
+        const modalCloseBtn = document.querySelector('.modal-close');
+
+        openReportBtn.addEventListener('click', () => {
+            reportModal.classList.add('open');
+            fetchPersonnelData();
+        });
+
+        // با کلیک روی ضربدر، هم پاپ‌آپ و هم سایدبار بسته می‌شوند
+        modalCloseBtn.addEventListener('click', () => {
+            reportModal.classList.remove('open');
+            sidebar.classList.remove('active');
+        });
+        
+        // با کلیک در فضای بیرون از پاپ‌آپ، پاپ‌آپ بسته می‌شود
+        window.addEventListener('click', (event) => {
+            if (event.target === reportModal) {
+                reportModal.classList.remove('open');
+            }
+        });
+
 
         // جاوا اسکریپت برای ارسال و دریافت اطلاعات
         const form = document.getElementById('contact-form');
@@ -150,6 +343,11 @@
         });
         
         function fetchPersonnelData() {
+            const loadingMessage = document.getElementById('loading-message');
+            const tableBody = document.querySelector('#personnel-table tbody');
+            loadingMessage.style.display = 'block';
+            tableBody.innerHTML = '';
+            
             fetch(scriptURL)
                 .then(response => {
                     if (!response.ok) {
@@ -158,23 +356,28 @@
                     return response.json();
                 })
                 .then(data => {
-                    const listElement = document.getElementById('personnel-list');
-                    listElement.innerHTML = '';
-                    
+                    loadingMessage.style.display = 'none';
+                    if (data.length === 0) {
+                        loadingMessage.textContent = 'اطلاعاتی برای نمایش وجود ندارد.';
+                        loadingMessage.style.display = 'block';
+                        return;
+                    }
+
                     data.forEach(item => {
-                        const div = document.createElement('div');
-                        div.className = 'sidebar-item';
-                        div.innerHTML = `
-                            <p><strong>نام:</strong> ${item.نام}</p>
-                            <p><strong>نام خانوادگی:</strong> ${item['نام خانوادگی']}</p>
-                            <p><strong>کد ملی:</strong> ${item['کد ملی']}</p>
-                        `;
-                        listElement.appendChild(div);
+                        const row = tableBody.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        const cell3 = row.insertCell(2);
+                        
+                        cell1.textContent = item.نام;
+                        cell2.textContent = item['نام خانوادگی'];
+                        cell3.textContent = item['کد ملی'];
                     });
                 })
                 .catch(error => {
-                    console.error('Error fetching data:', error);
-                    document.getElementById('personnel-list').innerHTML = 'مشکلی در بارگذاری اطلاعات پیش آمد. لطفاً از اتصال اینترنت خود مطمئن شوید و بعداً دوباره تلاش کنید.';
+                console.error('Error fetching data:', error);
+                loadingMessage.textContent = 'مشکلی در بارگذاری اطلاعات پیش آمد. لطفاً از اتصال اینترنت خود مطمئن شوید و بعداً دوباره تلاش کنید.';
+                loadingMessage.style.display = 'block';
                 });
         }
     </script>
