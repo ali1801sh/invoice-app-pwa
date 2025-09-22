@@ -608,8 +608,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Dark Mode Toggle elements
     const darkModeToggle = document.getElementById('darkModeToggle');
     const darkModeIcon = document.getElementById('darkModeIcon');
-
-    // --- START OF NEW DATA FOR IRANCODE AND BARCODE TABLE ---
+    
+    // --- DATA SOURCE 1: FOR BARCODES (from your first file) ---
     const productLines = [
         'بکینگ پودر، 180 g، خاتومه', 'نبات شاخه سفید، 450 g، مسیر سبز', 'چای سیاه آسام گرانول، 5 kg، مسیر سبز', 'نبات زعفرانی، نی دار، 26 عددی، خاتومه', 'شکر قهوه ای، 700 گرم، گیل دخت',
         'شکر، قهوه ای، 700 گرم، گیل دخت', 'شکر، قهوه ای، 900 گرم، گیل دخت', 'دارچین پودر شده، 100 g، مسیر سبز', 'ادویه مخلوط ماست و خیار گرانول، 75 g، مسیر سبز', 'بیکینگ پودر، 160 g، خاتومه',
@@ -642,134 +642,167 @@ document.addEventListener('DOMContentLoaded', function() {
         'ادویه کاری، 80 g، گیل دخت', 'سماق پودر شده، 80 g، گیل دخت', 'فلفل قرمز پودر شده، 50 g، گیل دخت', 'دارچین پودر شده، 90 g، گیل دخت', 'دارچین پودر شده، 50 g، گیل دخت',
         'سماق پودر شده، 75 g، گیل دخت', 'سماق پودر شده، 50 g، گیل دخت', 'آویشن پودر شده، 50 g، گیل دخت'
     ];
-    
-    const brands = [
-        'خاتومه', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'گیل دخت',
-        'گیل دخت', 'گیل دخت', 'مسیر سبز', 'مسیر سبز', 'خاتومه',
-        'مسیر سبز', 'گیل دخت', 'خاتومه', 'مسیر سبز', 'خاتومه',
-        'خاتومه', 'خاتومه', 'خاتومه', 'مسیر سبز', 'خاتومه',
-        'خاتومه', 'مسیر سبز', 'مسیر سبز', 'مسیر سبز', 'خاتومه',
-        'خاتومه', 'مسیر سبز', 'مسیر سبز', 'گیل دخت', 'خاتومه',
-        'مسیر سبز', 'مسیر سبز', 'خاتومه', 'خاتومه', 'مسیر سبز',
-        'گیل دخت', 'خاتومه', 'خاتومه', 'مسیر سبز', 'خاتومه',
-        'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
-        'خاتومه', 'مسیر سبز', 'مسیر سبز', 'مسیر سبز', 'خاتومه',
-        'خاتومه', 'گیل دخت', 'مسیر سبز', 'خاتومه', 'خاتومه',
-        'گیل دخت', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'خاتومه',
-        'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'مسیر سبز',
-        'مسیر سبز', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
-        'مسیر سبز', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
-        'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت',
-        'گیل دخت', 'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه',
-        'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت',
-        'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
-        'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت', 'خاتومه',
-        'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
-        'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت', 'خاتومه',
-        'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
-        'گیل دخت', 'گیل دخت', 'گیل دخت', 'خاتومه', 'خاتومه',
-        'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت',
-        'گیل دخت', 'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه',
-        'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت',
-        'گیل دخت', 'خاتومه', 'خاتومه', 'گیل دخت', 'خاتومه',
-        'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت',
-        'گیل دخت', 'گیل دخت', 'گیل دخت'
+    const brands_for_barcode = [
+        'خاتومه', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'مسیر سبز', 'گیل دخت', 'خاتومه', 'مسیر سبز', 'خاتومه',
+        'خاتومه', 'خاتومه', 'خاتومه', 'مسیر سبز', 'خاتومه', 'خاتومه', 'مسیر سبز', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'خاتومه', 'مسیر سبز', 'مسیر سبز', 'گیل دخت', 'خاتومه',
+        'مسیر سبز', 'مسیر سبز', 'خاتومه', 'خاتومه', 'مسیر سبز', 'گیل دخت', 'خاتومه', 'خاتومه', 'مسیر سبز', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
+        'خاتومه', 'مسیر سبز', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'خاتومه', 'گیل دخت', 'مسیر سبز', 'خاتومه', 'خاتومه', 'گیل دخت', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'خاتومه',
+        'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'مسیر سبز', 'مسیر سبز', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'مسیر سبز', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
+        'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت',
+        'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه',
+        'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'خاتومه', 'خاتومه',
+        'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'خاتومه', 'خاتومه', 'خاتومه', 'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت',
+        'گیل دخت', 'خاتومه', 'خاتومه', 'گیل دخت', 'خاتومه', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت', 'گیل دخت'
     ];
-
     const barcodes = [
-        '6260002530705', '6260001319998', '6260001341326', '6260002532068', '6262238322246',
-        '6262238322260', '6262238322277', '6260001182264', '6260001319929', '6260001182219',
-        '6260002530798', '6260303700333', '6262238322215', '6260001182233', '6260002532006',
-        '6260002532020', '6260002518468', '6260002518482', '6260001341340', '6260002532051',
-        '6260002532075', '6260001319912', '6260001319936', '6260001319974', '6260002532624',
-        '6260002518499', '6260001341319', '6260001341333', '6260303700357', '6262238322239',
-        '6260001182257', '6260001182271', '6260002518437', '6260002518451', '6260001182202',
-        '6260303700326', '6262238322208', '6262238322222', '6260001182226', '6260002532013',
-        '6260002532037', '6260002518475', '6260001341395', '6260002532099', '6260002532600',
-        '6260303700364', '6260001182295', '6260001319943', '6260001319950', '6260002518406',
-        '6260002518413', '6260004512464', '6260001341302', '6260002532082', '6260303700371',
-        '6260303700388', '6260001182288', '6260001319967', '6260002532617', '6260001341364',
-        '6260001341371', '6260303700340', '6260303700395', '6262238322253', '6260001182240',
-        '6260001319905', '6260002532044', '6260002518420', '6260002530712', '6260002532655',
-        '6260001319981', '6260001341357', '6260002518444', '6260001341388', '6260002530736',
-        '6260002532679', '6260004277127', '6260004281797', '6260004512433', '6260004512532',
-        '6260004512549', '6260004512648', '6260002530750', '6260002530774', '6260002676632',
-        '6260002676656', '6260004277165', '6260004281711', '6260004281766', '6260004512419',
-        '6260004512563', '6260002530729', '6260002530743', '6260004277110', '6260004277134',
-        '6260004277158', '6260004281704', '6260004281780', '6260004512426', '6260002532631',
-        '6260002532648', '6260002532662', '6260002532686', '6260002676618', '6260002676625',
-        '6260002676649', '6260004277189', '6260004512600', '6260004512655', '6260002530767',
-        '6260002530781', '6260004277172', '6260004281728', '6260004281759', '6260004281773',
-        '6260004512402', '6260004512495', '6260004512570', '6260002532693', '6260004277141',
-        '6260004277196', '6260004281742', '6260002676694', '6260303700319', '6260004512488',
-        '6260004512501', '6260004512624', '6260004512679', '6260303700302', '6260002676601',
-        '6260004277103', '6260004512440', '6260004512457', '6260004512525', '6260004512556',
-        '6260002676663', '6260004512686', '6260004512693', '6260004512594', '6260004281735',
-        '6260004512518', '6260004512587', '6260004512471', '6260004512617', '6260004512631',
-        '6260002676670', '6260002676687', '6260004512662'
+        '6260002530705', '6260001319998', '6260001341326', '6260002532068', '6262238322246', '6262238322260', '6262238322277', '6260001182264', '6260001319929', '6260001182219',
+        '6260002530798', '6260303700333', '6262238322215', '6260001182233', '6260002532006', '6260002532020', '6260002518468', '6260002518482', '6260001341340', '6260002532051',
+        '6260002532075', '6260001319912', '6260001319936', '6260001319974', '6260002532624', '6260002518499', '6260001341319', '6260001341333', '6260303700357', '6262238322239',
+        '6260001182257', '6260001182271', '6260002518437', '6260002518451', '6260001182202', '6260303700326', '6262238322208', '6262238322222', '6260001182226', '6260002532013',
+        '6260002532037', '6260002518475', '6260001341395', '6260002532099', '6260002532600', '6260303700364', '6260001182295', '6260001319943', '6260001319950', '6260002518406',
+        '6260002518413', '6260004512464', '6260001341302', '6260002532082', '6260303700371', '6260303700388', '6260001182288', '6260001319967', '6260002532617', '6260001341364',
+        '6260001341371', '6260303700340', '6260303700395', '6262238322253', '6260001182240', '6260001319905', '6260002532044', '6260002518420', '6260002530712', '6260002532655',
+        '6260001319981', '6260001341357', '6260002518444', '6260001341388', '6260002530736', '6260002532679', '6260004277127', '6260004281797', '6260004512433', '6260004512532',
+        '6260004512549', '6260004512648', '6260002530750', '6260002530774', '6260002676632', '6260002676656', '6260004277165', '6260004281711', '6260004281766', '6260004512419',
+        '6260004512563', '6260002530729', '6260002530743', '6260004277110', '6260004277134', '6260004277158', '6260004281704', '6260004281780', '6260004512426', '6260002532631',
+        '6260002532648', '6260002532662', '6260002532686', '6260002676618', '6260002676625', '6260002676649', '6260004277189', '6260004512600', '6260004512655', '6260002530767',
+        '6260002530781', '6260004277172', '6260004281728', '6260004281759', '6260004281773', '6260004512402', '6260004512495', '6260004512570', '6260002532693', '6260004277141',
+        '6260004277196', '6260004281742', '6260002676694', '6260303700319', '6260004512488', '6260004512501', '6260004512624', '6260004512679', '6260303700302', '6260002676601',
+        '6260004277103', '6260004512440', '6260004512457', '6260004512525', '6260004512556', '6260002676663', '6260004512686', '6260004512693', '6260004512594', '6260004281735',
+        '6260004512518', '6260004512587', '6260004512471', '6260004512617', '6260004512631', '6260002676670', '6260002676687', '6260004512662'
     ];
-
-    const packageTypes = [
-        'بطری', 'جعبه', 'کیسه', 'جعبه', 'قوطی',
-        'کیسه', 'کیسه', 'بطری', 'بطری', 'بطری',
-        'بطری', 'کیسه', 'کیسه', 'بطری', 'بطری',
-        'بطری', 'کیسه', 'کیسه', 'جعبه', 'جعبه',
-        'جعبه', 'بطری', 'بطری', 'بطری', 'بطری',
-        'بطری', 'جعبه', 'جعبه', 'کیسه', 'قوطی',
-        'بطری', 'بطری', 'قوطی', 'بطری', 'بطری',
-        'کیسه', 'کیسه', 'قوطی', 'بطری', 'بطری',
-        'بطری', 'بطری', 'بطری', 'جعبه', 'جعبه',
-        'کیسه', 'بطری', 'بطری', 'بطری', 'قوطی',
-        'قوطی', 'کیسه', 'جعبه', 'جعبه', 'کیسه',
-        'قوطی', 'بطری', 'بطری', 'کیسه', 'قوطی',
-        'قوطی', 'کیسه', 'کیسه', 'قوطی', 'بطری',
-        'بطری', 'بطری', 'قوطی', 'کیسه', 'بطری',
-        'بطری', 'بطری', 'کیسه', 'بطری', 'کیسه',
-        'بطری', 'بطری', 'بطری', 'کیسه', 'بطری',
-        'بطری', 'بطری', 'کیسه', 'کیسه', 'کیسه',
-        'کیسه', 'بطری', 'بطری', 'بطری', 'بطری',
-        'بطری', 'کیسه', 'کیسه', 'کیسه', 'کیسه',
-        'بطری', 'کیسه', 'کیسه', 'بطری', 'بطری',
-        'بطری', 'کیسه', 'کیسه', 'بطری', 'کیسه',
-        'قوطی', 'بطری', 'بطری', 'کیسه', 'کیسه',
-        'قوطی', 'کیسه', 'کیسه', 'کیسه', 'بطری',
-        'بطری', 'بطری', 'بطری', 'بطری', 'کیسه',
+    const packageTypes_for_barcode = [
+        'بطری', 'جعبه', 'کیسه', 'جعبه', 'قوطی', 'کیسه', 'کیسه', 'بطری', 'بطری', 'بطری', 'بطری', 'کیسه', 'کیسه', 'بطری', 'بطری', 'بطری', 'کیسه', 'کیسه', 'جعبه', 'جعبه',
+        'جعبه', 'بطری', 'بطری', 'بطری', 'بطری', 'بطری', 'جعبه', 'جعبه', 'کیسه', 'قوطی', 'بطری', 'بطری', 'قوطی', 'بطری', 'بطری', 'کیسه', 'کیسه', 'قوطی', 'بطری', 'بطری',
+        'بطری', 'بطری', 'بطری', 'جعبه', 'جعبه', 'کیسه', 'بطری', 'بطری', 'بطری', 'قوطی', 'قوطی', 'کیسه', 'جعبه', 'جعبه', 'کیسه', 'قوطی', 'بطری', 'بطری', 'کیسه', 'قوطی',
+        'قوطی', 'کیسه', 'کیسه', 'قوطی', 'بطری', 'بطری', 'بطری', 'قوطی', 'کیسه', 'بطری', 'بطری', 'بطری', 'کیسه', 'بطری', 'کیسه', 'بطری', 'بطری', 'بطری', 'کیسه', 'بطری',
+        'بطری', 'بطری', 'کیسه', 'کیسه', 'کیسه', 'کیسه', 'بطری', 'بطری', 'بطری', 'بطری', 'بطری', 'کیسه', 'کیسه', 'کیسه', 'کیسه', 'بطری', 'کیسه', 'کیسه', 'بطری', 'بطری',
+        'بطری', 'کیسه', 'کیسه', 'بطری', 'کیسه', 'قوطی', 'بطری', 'بطری', 'کیسه', 'کیسه', 'قوطی', 'کیسه', 'کیسه', 'کیسه', 'بطری', 'بطری', 'بطری', 'بطری', 'بطری', 'کیسه',
         'بطری', 'کیسه', 'کیسه', 'کیسه', 'کیسه'
     ];
+    
+    // --- DATA SOURCE 2: FOR IRANCODE (from your second file) ---
+    const irancodeSourceData = [
+        {name:"فلفل سیاه پودر شده نوع بسته بندی بسته سلفونی وزن 75 g نام تجارتی خاتومه", code:"0114110b58470001"}, {name:"فلفل قرمز پودر شده نوع بسته بندی بسته سلفونی وزن 50 g نام تجارتی خاتومه", code:"0114110b58470004"},
+        {name:"فلفل سیاه پودر شده نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114110b58470002"}, {name:"فلفل قرمز پودر شده نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114110b58470003"},
+        {name:"سماق گرانول نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114120b58470001"}, {name:"زیره سبز پودر شده نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114140b58470001"},
+        {name:"هل سبز نوع بسته بندی بسته سلفونی وزن 10 g نام تجارتی خاتومه", code:"0114210b58470001"}, {name:"زعفران سرگل نوع بسته بندی قوطی کریستالی وزن 0/2 g نام تجارتی خاتومه", code:"0114310b58470001"},
+        {name:"زعفران سرگل نوع بسته بندی قوطی کریستالی وزن 0/5 g نام تجارتی خاتومه", code:"0114310b58470002"}, {name:"زعفران سرگل نوع بسته بندی قوطی کریستالی وزن 1 g نام تجارتی خاتومه", code:"0114310b58470003"},
+        {name:"زعفران سرگل نوع بسته بندی قوطی کریستالی وزن 9/2 g نام تجارتی خاتومه", code:"0114310b58470004"}, {name:"زعفران سرگل نوع بسته بندی قوطی کریستالی وزن 2/3 g نام تجارتی خاتومه", code:"0114310b58470005"},
+        {name:"زعفران سرگل نوع بسته بندی قوطی کریستالی وزن 4/6 g نام تجارتی خاتومه", code:"0114310b58470006"}, {name:"آویشن پودر شده نوع بسته بندی بطری وزن 60 g نام تجارتی خاتومه", code:"0114360b58470001"},
+        {name:"زنجبیل پودر شده نوع بسته بندی بسته سلفونی وزن 50 g نام تجارتی خاتومه", code:"0114410b58470001"}, {name:"زنجبیل پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114410b58470002"},
+        {name:"زردچوبه پودر شده نوع بسته بندی بطری وزن 600 g نام تجارتی خاتومه", code:"0114420b58470001"}, {name:"زردچوبه پودر شده نوع بسته بندی بطری وزن 90 g نام تجارتی خاتومه", code:"0114420b58470002"},
+        {name:"زردچوبه پودر شده نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114420b58470003"}, {name:"دارچین پودر شده نوع بسته بندی بسته سلفونی وزن 50 g نام تجارتی خاتومه", code:"0114510b58470001"},
+        {name:"دارچین پودر شده نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114510b58470002"}, {name:"ادویه مخلوط کاری نوع بسته بندی بسته سلفونی وزن 75 g نام تجارتی خاتومه", code:"0114910b58470001"},
+        {name:"ادویه مخلوط کاری نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114910b58470002"}, {name:"ادویه مخلوط کباب نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114910b58470003"},
+        {name:"ادویه مخلوط گرانولی سالاد نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114910b58470004"}, {name:"ادویه مخلوط مرغ و ماهی نوع بسته بندی بطری وزن 100 g نام تجارتی خاتومه", code:"0114910b58470005"},
+        {name:"ادویه مخلوط گرانولی چهار زیره نوع بسته بندی بطری وزن 75 g نام تجارتی خاتومه", code:"0114910b58470006"}, {name:"سیر خشک پودر شده نوع بسته بندی بطری وزن 120 g نام تجارتی خاتومه", code:"0115230b58470001"},
+        {name:"نبات نی دار زعفرانی نوع بسته بندی جعبه مقوایی مقدار 10 عددی نام تجارتی خاتومه", code:"0162810b58470001"}, {name:"نبات نی دار زعفرانی نوع بسته بندی جعبه مقوایی مقدار 26 عددی نام تجارتی خاتومه", code:"0162810b58470002"},
+        {name:"نبات شاخه سفید نوع بسته بندی جعبه مقوایی مقدار 450 g نام تجارتی خاتومه", code:"0162810b58470003"}, {name:"نمک گرانول نوع بسته بندی بطری وزن 250 g نام تجارتی خاتومه", code:"0166100b58470001"},
+        {name:"نمک گرانول نوع بسته بندی بطری وزن 230 g نام تجارتی خاتومه", code:"0166100b58470002"}, {name:"چای سیاه گرانول CTC کنیا نوع بسته بندی جعبه مقوایی وزن 500 g نام تجارتی خاتومه", code:"0168300b58470001"},
+        {name:"چای سیاه گرانول CTC نوع بسته بندی جعبه مقوایی وزن 100 g نام تجارتی خاتومه", code:"0168300b58470002"}, {name:"چای سیاه گرانول آسام نوع بسته بندی کیسه برزنتی وزن 5 kg نام تجارتی خاتومه", code:"0168300b58470003"},
+        {name:"ادویه مخلوط گرانولی چهار زیره نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114910b58470009"}, {name:"ادویه مخلوط سالاد نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114910b58470011"},
+        {name:"ادویه مخلوط کباب نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114910b58470008"}, {name:"ادویه مخلوط مرغ و ماهی نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114910b58470010"},
+        {name:"ادویه مخلوط کاری نوع بسته بندی کیسه وزن 50 g نام تجارتی خاتومه", code:"0114910b58470013"}, {name:"فلفل قرمز پودر شده نوع بسته بندی بسته سلفونی وزن 75 g نام تجارتی خاتومه", code:"0114110b58470005"},
+        {name:"فلفل قرمز پودر شده نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114110b58470006"}, {name:"فلفل سیاه پودر شده نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114110b58470007"},
+        {name:"فلفل سیاه پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی خاتومه", code:"0114110b58470008"}, {name:"سماق پودر شده نوع بسته بندی بسته سلفونی وزن 75 g نام تجارتی خاتومه", code:"0114120b58470002"},
+        {name:"سماق پودر شده نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114120b58470003"}, {name:"سماق پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی خاتومه", code:"0114120b58470004"},
+        {name:"آویشن پودر شده نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114360b58470002"}, {name:"آویشن پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی خاتومه", code:"0114360b58470003"},
+        {name:"زنجبیل پودر شده نوع بسته بندی بسته سلفونی وزن 75 g نام تجارتی خاتومه", code:"0114410b58470003"}, {name:"زنجبیل پودر شده نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114410b58470004"},
+        {name:"زنجبیل پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی خاتومه", code:"0114410b58470005"}, {name:"زردچوبه پودر شده نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114420b58470005"},
+        {name:"زردچوبه پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی خاتومه", code:"0114420b58470006"}, {name:"دارچین پودر شده نوع بسته بندی بسته سلفونی وزن 75 g نام تجارتی خاتومه", code:"0114510b58470003"},
+        {name:"دارچین پودر شده نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114510b58470004"}, {name:"ادویه مخلوط کاری نوع بسته بندی کیسه وزن 30 g نام تجارتی خاتومه", code:"0114910b58470012"},
+        {name:"ادویه مخلوط کاری نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114910b58470014"}, {name:"دارچین پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114510b58470005"},
+        {name:"زردچوبه پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی گیل دخت", code:"0114420b58470008"}, {name:"زردچوبه پودر شده نوع بسته بندی بطری وزن 90 g نام تجارتی گیل دخت", code:"0114420b58470009"},
+        {name:"فلفل سیاه پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی گیل دخت", code:"0114110b58470011"}, {name:"فلفل سیاه پودر شده نوع بسته بندی بطری وزن 90 g نام تجارتی گیل دخت", code:"0114110b58470012"},
+        {name:"فلفل سیاه پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114110b58470013"}, {name:"فلفل سیاه پودر شده نوع بسته بندی کیسه وزن 75 g نام تجارتی گیل دخت", code:"0114110b58470014"},
+        {name:"فلفل قرمز پودر شده نوع بسته بندی کیسه وزن 75 g نام تجارتی گیل دخت", code:"0114110b58470015"}, {name:"فلفل قرمز پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114110b58470016"},
+        {name:"فلفل قرمز پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی گیل دخت", code:"0114110b58470017"}, {name:"فلفل قرمز پودر شده نوع بسته بندی بطری وزن 90 g نام تجارتی گیل دخت", code:"0114110b58470018"},
+        {name:"دارچین پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی گیل دخت", code:"0114510b58470006"}, {name:"دارچین پودر شده نوع بسته بندی بطری وزن 90 g نام تجارتی گیل دخت", code:"0114510b58470007"},
+        {name:"دارچین پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114510b58470008"}, {name:"دارچین پودر شده نوع بسته بندی کیسه وزن 75 g نام تجارتی گیل دخت", code:"0114510b58470009"},
+        {name:"زردچوبه پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114420b58470010"}, {name:"زردچوبه پودر شده نوع بسته بندی کیسه وزن 75 g نام تجارتی گیل دخت", code:"0114420b58470011"},
+        {name:"زنجبیل پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی گیل دخت", code:"0114410b58470006"}, {name:"سماق پودر شده نوع بسته بندی بطری وزن 90 g نام تجارتی گیل دخت", code:"0114120b58470005"},
+        {name:"سماق پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی گیل دخت", code:"0114120b58470006"}, {name:"سماق پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114120b58470007"},
+        {name:"سماق پودر شده نوع بسته بندی کیسه وزن 75 g نام تجارتی گیل دخت", code:"0114120b58470008"}, {name:"زنجبیل پودر شده نوع بسته بندی بطری وزن 90 g نام تجارتی گیل دخت", code:"0114410b58470007"},
+        {name:"ادویه مخلوط کاری نوع بسته بندی بطری وزن 90 g نام تجارتی گیل دخت", code:"0114910b58470016"}, {name:"آویشن پودر شده نوع بسته بندی بطری وزن 60 g نام تجارتی گیل دخت", code:"0114360b58470004"},
+        {name:"آویشن پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114360b58470005"}, {name:"زنجبیل پودر شده نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114410b58470008"},
+        {name:"زنجبیل پودر شده نوع بسته بندی کیسه وزن 75 g نام تجارتی گیل دخت", code:"0114410b58470009"}, {name:"ادویه مخلوط کاری نوع بسته بندی بطری وزن 80 g نام تجارتی گیل دخت", code:"0114910b58470015"},
+        {name:"ادویه مخلوط کاری نوع بسته بندی کیسه وزن 50 g نام تجارتی گیل دخت", code:"0114910b58470017"}, {name:"ادویه مخلوط کاری نوع بسته بندی کیسه وزن 75 g نام تجارتی گیل دخت", code:"0114910b58470018"},
+        {name:"سیر خشک پودر شده نوع بسته بندی بطری وزن 100 g نام تجارتی گیل دخت", code:"0115230b58470002"}, {name:"آویشن پودر شده نوع بسته بندی قوطی پلی پروپیلنی وزن 50 g نام تجارتی خاتومه", code:"0114360b58470006"},
+        {name:"آویشن پودر شده نوع بسته بندی قوطی پلی پروپیلنی وزن 50 g نام تجارتی گیل دخت", code:"0114360b58470007"}, {name:"سیر خشک پودر شده نوع بسته بندی قوطی پلی پروپیلنی وزن 100 g نام تجارتی خاتومه", code:"0115230b58470003"},
+        {name:"سیر خشک پودر شده نوع بسته بندی بسته پلاستیکی وزن 50 g نام تجارتی خاتومه", code:"0115230b58470004"}, {name:"سیر خشک پودر شده نوع بسته بندی بسته پلاستیکی وزن 75 g نام تجارتی خاتومه", code:"0115230b58470005"},
+        {name:"قند سفید نوع بسته بندی بسته سلفونی وزن 700 g نام تجارتی گیل دخت", code:"0168100b58470002"}, {name:"قند سفید نوع بسته بندی بسته سلفونی وزن 450 g نام تجارتی گیل دخت", code:"0168100b58470001"},
+        {name:"شکر سفید نوع بسته بندی بسته سلفونی وزن 900 g نام تجارتی گیل دخت", code:"0168200b58470001"}, {name:"شکر سفید نوع بسته بندی بسته سلفونی وزن 700 g نام تجارتی گیل دخت", code:"0168200b58470002"},
+        {name:"بیکینگ پودر معمولی نوع بسته بندی بطری وزن 160 g نام تجارتی خاتومه", code:"0166410b58470001"}, {name:"بیکینگ پودر معمولی نوع بسته بندی بطری وزن 180 g نام تجارتی خاتومه", code:"0166410b58470002"},
+        {name:"ادویه مخلوط کاری نوع بسته بندی بطری وزن 90 g نام تجارتی خاتومه", code:"0114910b58470007"}, {name:"قند سفید نوع بسته بندی بسته سلفونی وزن 700 g نام تجارتی خاتومه", code:"0168100b58470003"},
+        {name:"شکر سفید نوع بسته بندی بسته سلفونی وزن 900 g نام تجارتی خاتومه", code:"0168200b58470003"}, {name:"فلفل سیاه پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114110b58470009"},
+        {name:"فلفل قرمز پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114110b58470010"}, {name:"زردچوبه پودر شده نوع بسته بندی بطری وزن 80 g نام تجارتی خاتومه", code:"0114420b58470007"},
+        {name:"شکر قهوه ای بسته سلفونی وزن 700 g نام تجارتی خاتومه", code:"0168200b58470006"}, {name:"شکر قهوه ای بسته سلفونی وزن 900 g نام تجارتی خاتومه", code:"0168200b58470007"},
+        {name:"شکر قهوه ای ظرف پت وزن 900 g نام تجارتی خاتومه", code:"0168200b58470008"}, {name:"شکر قهوه ای ظرف پت وزن 700 g نام تجارتی خاتومه", code:"0168200b58470009"},
+        {name:"شکر قهوه ای ظرف پت وزن 700 g نام تجارتی گیل دخت", code:"0168200b58470010"}, {name:"شکر قهوه ای ظرف پت وزن 900 g نام تجارتی گیل دخت", code:"0168200b58470011"},
+        {name:"شکر قهوه ای بسته سلفونی وزن 900 g نام تجارتی گیل دخت", code:"0168200b58470012"}, {name:"شکر قهوه ای بسته سلفونی وزن 700 g نام تجارتی گیل دخت", code:"0168200b58470013"},
+        {name:"شکر سفید قوطی وزن 900 g نام تجارتی گیل دخت", code:"0168200b58470004"}, {name:"شکر سفید بسته سلفونی وزن 3 kg نام تجارتی گیل دخت", code:"0168200b58470005"},
+        {name:"زردچوبه پودر شده نوع بسته بندی بطری وزن 350 g نام تجارتی خاتومه", code:"0114420b58470004"},
+    ];
 
+    // --- Data Processing: Create the TWO SEPARATE data structures ---
 
-    const realIrancodeBarcodeData = productLines.map((description, index) => {
+    // Structure 1: For the BARCODE table (using original data)
+    const barcodeData = productLines.map((description, index) => ({
+        id: index + 1,
+        description: description,
+        packageType: packageTypes_for_barcode[index] || 'نامشخص',
+        brand: brands_for_barcode[index] || 'نامشخص',
+        barcode: barcodes[index] || '---'
+    }));
+
+    // Structure 2: For the IRANCODE table (using new data)
+    const iranCodeData = irancodeSourceData.map((item, index) => {
+        const name = item.name;
+        let brand = 'نامشخص';
+        let packageType = 'نامشخص';
+        let description = '';
+
+        const brandMatch = name.match(/نام تجارتی (.*)/);
+        if (brandMatch) {
+            brand = brandMatch[1].trim();
+        }
+
+        const packageMatch = name.match(/نوع بسته بندی (.*?)(?= وزن| مقدار| نام تجارتی|$)/);
+        if (packageMatch) {
+            packageType = packageMatch[1].trim();
+        }
+        
+        const productPart = name.split(' نوع بسته بندی')[0].trim();
+        const weightMatch = name.match(/(وزن|مقدار) ([\d/.]+\s*(?:g|kg|عددی))/);
+        const weightPart = weightMatch ? weightMatch[2].trim().replace('g', 'گرم') : '';
+        
+        description = `${productPart}, ${weightPart}, ${brand}`;
+        description = description.replace(/ ,/g, ',').replace(/, ,/g, ',').replace(/,\s*$/, '').trim();
+
         return {
-            id: index + 1, // Sequential ID
+            id: index + 1,
             description: description,
-            packageType: packageTypes[index] || 'نامشخص', // New column
-            brand: brands[index] || 'نامشخص', // Assign brand from the new array
-            irancode: '0', // Keeping as '0' since no specific irancode data was provided
-            barcode: barcodes[index] || '0' // Assign barcode from the new array
+            packageType: packageType,
+            brand: brand,
+            irancode: item.code,
         };
     });
-    // --- END OF NEW DATA ---
-
-
+    
     // Function to convert Persian numerals to English numerals
     function convertPersianToEnglishNumbers(str) {
         if (typeof str !== 'string') return str;
         const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
         const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-        return str.replace(/[۰-۹]/g, function(d) {
-            return englishNumbers[persianNumbers.indexOf(d)];
-        });
+        return str.replace(/[۰-۹]/g, (d) => englishNumbers[persianNumbers.indexOf(d)]);
     }
 
     // Function to format a number with commas
     function formatNumberWithCommas(numberString) {
-        // Remove existing commas, convert Persian to English numbers first
         let cleanedString = convertPersianToEnglishNumbers(String(numberString)).replace(/,/g, '');
-        // Check if it's a valid number
         if (isNaN(cleanedString) || cleanedString === '' || cleanedString === '-' || cleanedString === '---') {
-            return numberString; // Return original if not a number or special character
+            return numberString;
         }
-        // Convert to number and then format
         return Number(cleanedString).toLocaleString('en-US');
     }
 
@@ -788,15 +821,13 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('theme', 'light');
     }
 
-    // Check saved theme preference on load
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         enableDarkMode();
     } else {
-        disableDarkMode(); // Ensure light mode is applied if no preference or 'light'
+        disableDarkMode();
     }
 
-    // Toggle theme on button click
     darkModeToggle.addEventListener('click', () => {
         if (document.body.classList.contains('dark-mode')) {
             disableDarkMode();
@@ -808,26 +839,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Shamsi Date and Time ---
     function getShamsiDate() {
         const now = new Date();
-        const options = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: false // Use 24-hour format
-        };
-        // Use 'fa-IR' locale for Persian/Shamsi date
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         const shamsiDate = new Intl.DateTimeFormat('fa-IR', options).format(now);
         shamsiDateTimeDiv.textContent = shamsiDate;
     }
 
-    // Update time every second
     setInterval(getShamsiDate, 1000);
-    // Initial call
     getShamsiDate();
 
-    // --- Product Data (simulated) ---
+    // --- Product Data ---
     const productsData = {
         razavi: `
             <div class="search-container">
@@ -891,7 +911,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <tr><td>6</td><td>زرد چوبه</td><td>پت</td><td>90 گرم</td><td>623920</td><td>779900</td><td>50/24106</td></tr>
                     <tr><td>7</td><td>پودر کاری</td><td>پت</td><td>90 گرم</td><td>817520</td><td>1021900</td><td>50/24273</td></tr>
                     <tr><td>8</td><td>زنجبیل</td><td>پت</td><td>90 گرم</td><td>940720</td><td>1175900</td><td>50/24109</td></tr>
-                    <tr><td>8</td><td>پودر سیر</td><td>پت</td><td>100 گرم</td><td>993520</td><td>1241900</td><td>50/24110</td></tr>
+                    <tr><td>9</td><td>پودر سیر</td><td>پت</td><td>100 گرم</td><td>993520</td><td>1241900</td><td>50/24110</td></tr>
                     <tr><td>10</td><td>شکر</td><td>900 گرم</td><td>900 گرم</td><td>801000</td><td>890000</td><td>50/30520</td></tr>
                 </tbody>
             </table>
@@ -949,7 +969,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     <option value="">فیلتر با نام تجاری: همه</option>
                     <option value="گیل دخت">گیل دخت</option>
                     <option value="خاتومه">خاتومه</option>
-                    <option value="مسیر سبز">مسیر سبز</option>
                 </select>
                 <button id="searchButton">جستجو</button>
             </div>
@@ -965,9 +984,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${realIrancodeBarcodeData.map((product, index) => `
+                    ${iranCodeData.map(product => `
                         <tr>
-                            <td>${index + 1}</td>
+                            <td>${product.id}</td>
                             <td>${product.description}</td>
                             <td>${product.packageType}</td> 
                             <td>${product.brand}</td>
@@ -1002,9 +1021,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </tr>
                 </thead>
                 <tbody>
-                    ${realIrancodeBarcodeData.map((product, index) => `
+                    ${barcodeData.map(product => `
                         <tr>
-                            <td>${index + 1}</td>
+                            <td>${product.id}</td>
                             <td>${product.description}</td>
                             <td>${product.packageType}</td> 
                             <td>${product.brand}</td>
@@ -1017,68 +1036,45 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     function loadProductContent(productKey) {
-        welcomeMessageDiv.style.display = 'none'; // Hide welcome message
-        productSpecificContentDiv.innerHTML = productsData[productKey]; // Load content
-        productSpecificContentDiv.style.display = 'block'; // Show product content
+        welcomeMessageDiv.style.display = 'none';
+        productSpecificContentDiv.innerHTML = productsData[productKey];
+        productSpecificContentDiv.style.display = 'block';
 
-        // Convert numbers to English and format with commas in the loaded table
         const loadedTable = productSpecificContentDiv.querySelector('#productTable');
         if (loadedTable) {
-            let cellsToConvertAndFormat = [];
-            // For irancode/barcode views, only format the 'ردیف' (row number) column
+            let cellsToFormat;
             if (productKey === 'view-irancode' || productKey === 'view-barcode') {
-                cellsToConvertAndFormat = loadedTable.querySelectorAll('td:nth-child(1)');
+                cellsToFormat = loadedTable.querySelectorAll('td:nth-child(1)');
             } else {
-                // For other product tables, format Radeef, Vazn Gram, Gheymat Tolid, Gheymat Masraf Konandeh
-                cellsToConvertAndFormat = loadedTable.querySelectorAll('td:nth-child(1), td:nth-child(3), td:nth-child(5), td:nth-child(6)'); 
+                cellsToFormat = loadedTable.querySelectorAll('td:nth-child(1), td:nth-child(3), td:nth-child(5), td:nth-child(6)'); 
             }
             
-            cellsToConvertAndFormat.forEach(cell => {
-                let originalText = cell.textContent.trim();
-                let convertedAndFormattedText = originalText;
-
-                if (originalText.includes('گرم') || originalText.includes('کیلوگرم')) {
-                    // Handle cases like "90 گرم" or "900 گرم" where we only want to format the number part
-                    const parts = originalText.split(' ');
-                    if (parts.length > 1) {
-                        const numberPart = formatNumberWithCommas(parts[0]);
-                        convertedAndFormattedText = numberPart + ' ' + parts[1];
-                    } else {
-                        convertedAndFormattedText = formatNumberWithCommas(originalText);
-                    }
-                } else if (originalText === '-' || originalText === '---') {
-                    // Do nothing for hyphens or "---"
-                    convertedAndFormattedText = originalText;
-                } else {
-                    // For pure numbers (like Radeef, Gheymat Tolid, Gheymat Masraf Konandeh, Irancode/Barcode Radeef)
-                    convertedAndFormattedText = formatNumberWithCommas(originalText);
-                }
-                cell.textContent = convertedAndFormattedText;
+            cellsToFormat.forEach(cell => {
+                cell.textContent = formatNumberWithCommas(cell.textContent);
             });
         }
 
-
-        // Re-initialize search and autocomplete for the newly loaded content
         const newSearchInput = document.getElementById('searchInput');
         const newSearchButton = document.getElementById('searchButton');
-        const newProductTable = document.querySelector('#productSpecificContent #productTable'); // Get the table itself
+        const newProductTable = document.querySelector('#productSpecificContent #productTable');
         
-        // Only run search/autocomplete setup if a table is present for the loaded content
         if (newProductTable) {
             const newMainTableBody = newProductTable.querySelector('tbody');
             if (newSearchInput && newSearchButton && newMainTableBody) {
                 let searchData = [];
-                // For irancode/barcode views, search data should include description, package type, brand, and the specific code
-                if (productKey === 'view-irancode' || productKey === 'view-barcode') {
-                    searchData = realIrancodeBarcodeData.map(item => 
-                        `${item.description} ${item.packageType} ${item.brand} ${productKey === 'view-irancode' ? item.irancode : item.barcode}`
-                    );
+                let dataSource = [];
+
+                if (productKey === 'view-irancode') {
+                    dataSource = iranCodeData;
+                    searchData = dataSource.map(item => `${item.description} ${item.packageType} ${item.brand} ${item.irancode}`);
+                } else if (productKey === 'view-barcode') {
+                    dataSource = barcodeData;
+                    searchData = dataSource.map(item => `${item.description} ${item.packageType} ${item.brand} ${item.barcode}`);
                 } else {
                     const productRows = Array.from(newMainTableBody.getElementsByTagName('tr'));
                     searchData = productRows.map(row => row.getElementsByTagName('td')[1].textContent.trim());
                 }
 
-                // Attach event listeners to the new elements
                 newSearchButton.onclick = () => performSearch(newSearchInput, newMainTableBody, productKey);
                 newSearchInput.addEventListener('keyup', (event) => {
                     if (event.key === 'Enter') {
@@ -1087,33 +1083,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 autocomplete(newSearchInput, searchData);
 
-                // --- Specific logic for irancode-barcode table filters ---
                 if (productKey === 'view-irancode' || productKey === 'view-barcode') {
                     const brandFilter = document.getElementById('brandFilter');
                     if (brandFilter) {
-                        // Initial filter application
                         applyIrancodeBarcodeFilter(); 
                         brandFilter.addEventListener('change', applyIrancodeBarcodeFilter);
-                        newSearchInput.addEventListener('input', applyIrancodeBarcodeFilter); // Also trigger filter on search input
+                        newSearchInput.addEventListener('input', applyIrancodeBarcodeFilter);
                     }
                 }
             }
 
-            // Add click event listener to table rows for highlighting
             const rows = newProductTable.querySelectorAll('tbody tr');
             rows.forEach(row => {
                 row.addEventListener('click', function() {
-                    // Remove highlight from all other rows in this table
                     rows.forEach(r => r.classList.remove('highlight'));
-                    // Add highlight to the clicked row
                     this.classList.add('highlight');
                 });
             });
         }
-        closeNav(); // Close sidebar after selection
+        closeNav();
     }
 
-    // New function to apply filters for irancode-barcode table
     function applyIrancodeBarcodeFilter() {
         const searchInput = document.getElementById('searchInput');
         const brandFilter = document.getElementById('brandFilter');
@@ -1122,40 +1112,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const searchText = searchInput ? searchInput.value.trim().toLowerCase() : '';
         const selectedBrand = brandFilter ? brandFilter.value.trim().toLowerCase() : '';
-        const currentProductKey = document.querySelector('.sidebar ul li .dropdown-content li a.active').dataset.product; // Get active product key
-
+        
         Array.from(tableBody.children).forEach(row => {
-            const description = row.getElementsByTagName('td')[1].textContent.toLowerCase();
-            const packageType = row.getElementsByTagName('td')[2].textContent.toLowerCase(); // Get package type
-            const brand = row.getElementsByTagName('td')[3].textContent.toLowerCase(); // Get brand
-            
-            let idCode = '';
-            if (currentProductKey === 'view-irancode') {
-                idCode = row.getElementsByTagName('td')[4].textContent.toLowerCase(); // Irancode is 5th column (index 4)
-            } else if (currentProductKey === 'view-barcode') {
-                idCode = row.getElementsByTagName('td')[4].textContent.toLowerCase(); // Barcode is 5th column (index 4)
-            }
+            const description = row.cells[1].textContent.toLowerCase();
+            const packageType = row.cells[2].textContent.toLowerCase();
+            const brand = row.cells[3].textContent.toLowerCase();
+            const idCode = row.cells[4].textContent.toLowerCase();
 
             const textMatch = description.includes(searchText) || 
-                              packageType.includes(searchText) || // Search in package type
-                              irancode.includes(searchText) || 
-                              barcode.includes(searchText) ||
-                              brand.includes(searchText); // Also search in brand name
+                              packageType.includes(searchText) || 
+                              brand.includes(searchText) ||
+                              idCode.includes(searchText);
             
-            // Re-evaluate the textMatch based on current view (irancode or barcode)
-            let currentViewTextMatch = description.includes(searchText) || 
-                                       packageType.includes(searchText) || 
-                                       brand.includes(searchText);
-            if (currentProductKey === 'view-irancode') {
-                currentViewTextMatch = currentViewTextMatch || row.getElementsByTagName('td')[4].textContent.toLowerCase().includes(searchText);
-            } else if (currentProductKey === 'view-barcode') {
-                currentViewTextMatch = currentViewTextMatch || row.getElementsByTagName('td')[4].textContent.toLowerCase().includes(searchText);
-            }
+            const brandMatch = (selectedBrand === '' || brand.includes(selectedBrand));
 
-
-            const brandMatch = (selectedBrand === '' || brand === selectedBrand);
-
-            if (currentViewTextMatch && brandMatch) {
+            if (textMatch && brandMatch) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
@@ -1163,15 +1134,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-
-    // Function to perform search (now takes input and tbody elements)
     const performSearch = (inputElem, tableBodyElem, productKey) => {
         const query = inputElem.value.trim().toLowerCase();
-        // If it's the irancode-barcode table, we search based on the currently displayed (filtered) rows.
-        // Otherwise, we search all rows as before.
         const rowsToSearch = Array.from(tableBodyElem.children).filter(row => row.style.display !== 'none');
 
-        if (!query && !['view-irancode', 'view-barcode'].includes(productKey)) { // For other tables, if no query, show alert
+        if (!query && !['view-irancode', 'view-barcode'].includes(productKey)) {
             alert("لطفاً نام محصولی را برای جستجو وارد کنید.");
             return;
         }
@@ -1180,7 +1147,6 @@ document.addEventListener('DOMContentLoaded', function() {
         modalBody.innerHTML = '';
 
         const resultTable = document.createElement('table');
-        // Clone header from the product table that is currently displayed
         const currentProductTable = document.querySelector('#productSpecificContent #productTable');
         const tableHeader = currentProductTable ? currentProductTable.querySelector('thead').cloneNode(true) : null;
         if (tableHeader) resultTable.appendChild(tableHeader);
@@ -1188,21 +1154,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const resultTbody = document.createElement('tbody');
         resultTable.appendChild(resultTbody);
         
-        // Use the rows from the provided tableBodyElem
-        
         rowsToSearch.forEach(row => {
             let rowContent = '';
             if (productKey === 'view-irancode' || productKey === 'view-barcode') {
-                const description = row.getElementsByTagName('td')[1].textContent.toLowerCase();
-                const packageType = row.getElementsByTagName('td')[2].textContent.toLowerCase(); // Get package type
-                const brand = row.getElementsByTagName('td')[3].textContent.toLowerCase(); // Get brand
-                const idCode = row.getElementsByTagName('td')[4].textContent.toLowerCase(); // This column will be either irancode or barcode
-                rowContent = `${description} ${packageType} ${brand} ${idCode}`;
+                rowContent = Array.from(row.cells).map(cell => cell.textContent.toLowerCase()).join(' ');
             } else {
-                rowContent = row.getElementsByTagName('td')[1].textContent.toLowerCase();
+                rowContent = row.cells[1].textContent.toLowerCase();
             }
 
-            if (query === "" || rowContent.includes(query)) { // If query is empty, all currently visible rows are results
+            if (query === "" || rowContent.includes(query)) {
                 const clonedRow = row.cloneNode(true);
                 resultTbody.appendChild(clonedRow);
                 resultFound = true;
@@ -1211,34 +1171,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (resultFound) {
             modalBody.appendChild(resultTable);
-             // Convert numbers to English and format with commas in the modal table
             const modalTable = modalBody.querySelector('table');
             if (modalTable) {
-                let cellsToConvertAndFormat = [];
+                let cellsToFormat;
                 if (productKey === 'view-irancode' || productKey === 'view-barcode') {
-                    cellsToConvertAndFormat = modalTable.querySelectorAll('td:nth-child(1)'); // Only the Radeef column
+                    cellsToFormat = modalTable.querySelectorAll('td:nth-child(1)');
                 } else {
-                    cellsToConvertAndFormat = modalTable.querySelectorAll('td:nth-child(1), td:nth-child(3), td:nth-child(5), td:nth-child(6)');
+                    cellsToFormat = modalTable.querySelectorAll('td:nth-child(1), td:nth-child(3), td:nth-child(5), td:nth-child(6)');
                 }
-
-                cellsToConvertAndFormat.forEach(cell => {
-                    let originalText = cell.textContent.trim();
-                    let convertedAndFormattedText = originalText;
-
-                    if (originalText.includes('گرم') || originalText.includes('کیلوگرم')) {
-                        const parts = originalText.split(' ');
-                        if (parts.length > 1) {
-                            const numberPart = formatNumberWithCommas(parts[0]);
-                            convertedAndFormattedText = numberPart + ' ' + parts[1];
-                        } else {
-                            convertedAndFormattedText = formatNumberWithCommas(originalText);
-                        }
-                    } else if (originalText === '-' || originalText === '---') {
-                        convertedAndFormattedText = originalText;
-                    } else {
-                        convertedAndFormattedText = formatNumberWithCommas(originalText);
-                    }
-                    cell.textContent = convertedAndFormattedText;
+                cellsToFormat.forEach(cell => {
+                    cell.textContent = formatNumberWithCommas(cell.textContent);
                 });
             }
         } else {
@@ -1247,7 +1189,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         modal.style.display = 'block';
 
-        // Add highlight logic to rows in the modal too
         const modalRows = modalBody.querySelectorAll('tbody tr');
         modalRows.forEach(row => {
             row.addEventListener('click', function() {
@@ -1257,18 +1198,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // Modal close handlers
-    closeModal.onclick = function() {
-        modal.style.display = 'none';
-    }
-
-    window.onclick = function(event) {
+    closeModal.onclick = () => modal.style.display = 'none';
+    window.onclick = (event) => {
         if (event.target == modal) {
             modal.style.display = 'none';
         }
-    }
+    };
 
-    // Autocomplete logic (unchanged, just needs to be called on new searchInput)
     function autocomplete(inp, arr) {
         let currentFocus;
         inp.addEventListener("input", function(e) {
@@ -1299,131 +1235,55 @@ document.addEventListener('DOMContentLoaded', function() {
         inp.addEventListener("keydown", function(e) {
             let x = document.getElementById(this.id + "autocomplete-list");
             if (x) x = x.getElementsByTagName("div");
-            if (e.keyCode == 40) { // Arrow DOWN
-                currentFocus++;
-                addActive(x);
-            } else if (e.keyCode == 38) { // Arrow UP
-                currentFocus--;
-                addActive(x);
-            } else if (e.keyCode == 13) { // Enter
-                e.preventDefault();
-                if (currentFocus > -1) {
-                    if (x) x[currentFocus].click();
-                }
-            }
+            if (e.keyCode == 40) { currentFocus++; addActive(x);
+            } else if (e.keyCode == 38) { currentFocus--; addActive(x);
+            } else if (e.keyCode == 13) { e.preventDefault(); if (currentFocus > -1) { if (x) x[currentFocus].click(); } }
         });
 
-        function addActive(x) {
-            if (!x) return false;
-            removeActive(x);
-            if (currentFocus >= x.length) currentFocus = 0;
-            if (currentFocus < 0) currentFocus = (x.length - 1);
-            x[currentFocus].classList.add("autocomplete-active");
-        }
-
-        function removeActive(x) {
-            for (let i = 0; i < x.length; i++) {
-                x[i].classList.remove("autocomplete-active");
-            }
-        }
-
+        function addActive(x) { if (!x) return false; removeActive(x); if (currentFocus >= x.length) currentFocus = 0; if (currentFocus < 0) currentFocus = (x.length - 1); x[currentFocus].classList.add("autocomplete-active"); }
+        function removeActive(x) { for (let i = 0; i < x.length; i++) { x[i].classList.remove("autocomplete-active"); } }
         function closeAllLists(elmnt) {
             const x = document.getElementsByClassName("autocomplete-items");
-            for (let i = 0; i < x.length; i++) {
-                if (elmnt != x[i] && elmnt != inp) {
-                    x[i].parentNode.removeChild(x[i]);
-                }
-            }
+            for (let i = 0; i < x.length; i++) { if (elmnt != x[i] && elmnt != inp) { x[i].parentNode.removeChild(x[i]); } }
         }
-
-        document.addEventListener("click", function (e) {
-            closeAllLists(e.target);
-        });
+        document.addEventListener("click", (e) => closeAllLists(e.target));
     }
 
-    // --- Sidebar Open/Close Logic ---
     function openNav() {
-        mySidebar.classList.add('active'); // Use class for active state
-        myOverlay.classList.add('active');
-        document.body.classList.add('sidebar-open');
-        
-        // Handle width based on screen size
-        if (window.innerWidth <= 768) {
-            mySidebar.style.width = "70vw";
-            document.body.classList.add('sidebar-open-mobile');
-            document.body.classList.remove('sidebar-open'); // Remove desktop specific class
-        } else {
-            mySidebar.style.width = "250px";
-            document.body.classList.remove('sidebar-open-mobile'); // Remove mobile specific class
-            document.body.classList.add('sidebar-open'); // Add desktop specific class
-        }
+        mySidebar.classList.add('active'); mySidebar.style.width = window.innerWidth <= 768 ? "70vw" : "250px";
+        myOverlay.classList.add('active'); document.body.classList.add('sidebar-open');
     }
-
     function closeNav() {
-        mySidebar.classList.remove('active');
-        mySidebar.style.width = "0"; // Explicitly set width to 0
-        myOverlay.classList.remove('active');
-        document.body.classList.remove('sidebar-open');
-        document.body.classList.remove('sidebar-open-mobile');
+        mySidebar.classList.remove('active'); mySidebar.style.width = "0";
+        myOverlay.classList.remove('active'); document.body.classList.remove('sidebar-open');
     }
 
     openSidebarBtn.onclick = openNav;
     closeSidebarBtn.onclick = closeNav;
     myOverlay.onclick = closeNav;
 
-    // --- Sidebar Dropdown Logic ---
     const dropdownToggles = document.querySelectorAll('.sidebar ul li.dropdown > a');
-
     dropdownToggles.forEach(toggle => {
         toggle.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent default link behavior if it's a link
-            const dropdownContent = this.nextElementSibling; // The ul.dropdown-content
-            const dropdownIcon = this.querySelector('.dropdown-icon');
-
-            // Toggle active class on dropdown content
-            dropdownContent.classList.toggle('active');
-            // Rotate the icon
-            dropdownIcon.classList.toggle('rotated');
+            event.preventDefault();
+            this.nextElementSibling.classList.toggle('active');
+            this.querySelector('.dropdown-icon').classList.toggle('rotated');
         });
     });
 
-
-    // --- Sidebar Sub-link Click Handlers (for actual product/irancode links) ---
     const sidebarSubLinks = document.querySelectorAll('.sidebar ul li .dropdown-content li a');
     sidebarSubLinks.forEach(link => {
         link.addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent default link behavior
-            
-            // Remove active class from all sub-links AND main dropdown links
+            event.preventDefault();
             document.querySelectorAll('.sidebar ul li a').forEach(item => item.classList.remove('active'));
-            // Add active class to clicked link
             this.classList.add('active');
-
-            const productType = this.dataset.product; // Get data-product attribute
-            loadProductContent(productType);
+            loadProductContent(this.dataset.product);
         });
     });
 
-    // Handle window resize for sidebar
-    window.addEventListener('resize', () => {
-        if (mySidebar.classList.contains('active')) {
-            if (window.innerWidth <= 768) {
-                mySidebar.style.width = "70vw";
-                document.body.classList.add('sidebar-open-mobile');
-                document.body.classList.remove('sidebar-open');
-            } else {
-                mySidebar.style.width = "250px";
-                document.body.classList.remove('sidebar-open-mobile');
-                document.body.classList.add('sidebar-open');
-            }
-        }
-    });
-
-    // Initial state: Only welcome message and date/time are visible.
-    // No product content is loaded until a sidebar link is clicked.
+    window.addEventListener('resize', () => { if (mySidebar.classList.contains('active')) { openNav(); } });
 });
 </script>
 
 </body>
 </html>
-
